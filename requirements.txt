@@ -1,0 +1,4 @@
+datasets
+elasticsearch==7.9.1
+pytrec_eval
+
