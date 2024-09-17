@@ -1,7 +1,8 @@
 rusBeIR is a [BeIR](https://github.com/beir-cellar/beir)-based Information Retrieval benchmark for Russian language.
 It contains 10 datasets from different domains and more datasets will be added in future.
 
-| Dataset | BM25     | E5 | 
+| Dataset | BM25 | E5 | 
+|----|----|----|
 |[rus-mmarco-google](https://huggingface.co/datasets/kngrg/rus-mmarco-google)|  ✅ |  ✅  | 
 |[rus-mmarco-helsinki](https://huggingface.co/datasets/kngrg/rus-mmarco-helsinki)|  ✅ |  ✅  | 
 |[rus-scifact](https://huggingface.co/datasets/kngrg/rus-scifact)|  ✅ |  ✅  | 
