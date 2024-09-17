@@ -3,4 +3,4 @@ It contains 10 datasets from different domains and more datasets will be added i
 
 Currently available datasets and baselines could be found [here](https://docs.google.com/document/d/1F1zHZm36eiK_uhiptbDWAOCyXInBaXQ1ZkpZMLx9eEc/edit?usp=sharing).
 
-
+All datasets available at HuggingFace: [datasets](https://huggingface.co/collections/kngrg/rusbeir-66e28cb06e3e074be55ac0f3)
