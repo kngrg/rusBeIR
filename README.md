@@ -1,6 +1,52 @@
 rusBeIR is a [BeIR](https://github.com/beir-cellar/beir)-based Information Retrieval benchmark for Russian language.
 It contains 10 datasets from different domains and more datasets will be added in future. Some of these datasets are parts of multilingual datasets, other are translated from the original ones or were originally in russian. 
 
+##  Quick Example
+
+```python
+"""
+This example shows how to evaluate ElasticSearch-BM25 in rusBeIR.
+We advise you to use docker for running ElasticSearch. 
+To be able to run the code below you must have docker locally installed in your machine.
+To install docker on your local machine, please refer here: https://docs.docker.com/get-docker/
+
+After docker installation, please follow the steps below to get docker container up and running:
+
+1. docker pull docker.elastic.co/elasticsearch/elasticsearch:7.5.2
+2. docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.5.2
+""" 
+
+
+from rusBeIR.beir.datasets.data_loader_hf import HFDataLoader
+from rusBeIR.beir.retrieval.evaluation import EvaluateRetrieval
+from rusBeIR.beir.retrieval.search.dense import DenseRetrievalExactSearch as DRES
+
+#### Load dataset via HF 
+corpus, queries, qrels = HFDataLoader(hf_repo="kngrg/rus-mmarco", hf_repo_qrels="kngrg/rus-mmarco", streaming=False,
+                                       keep_in_memory=False).load(split='test') # select necessary split train/test/dev
+
+#### Initialize BM25 model
+from rusBeIR.beir.retrieval.search.lexical import BM25Search as BM25
+from rusBeIR.beir.retrieval.evaluation import EvaluateRetrieval
+
+#### Provide parameters for elastic-search
+hostname = "localhost:9200"
+index_name = "mmarco" 
+
+#### Index dataset and retrieve documents
+model = BM25(index_name=index_name, hostname=hostname, initialize=True)
+retriever = EvaluateRetrieval(model)
+results = retriever.retrieve(corpus, queries)
+
+#### Evaluate your model with NDCG@k, MAP@K, Recall@K and Precision@K  where k = [1,3,5,10,100,1000] 
+ndcg, _map, recall, precision = retriever.evaluate(qrels, results, retriever.k_values)
+
+#### Evaluate your model with MRR@k where k = [1,3,5,10,100,1000]
+mrr = retriever.evaluate_custom(qrels, results, retriever.k_values, "mrr")
+```
+
+##  Available Datasets
+
  Dataset   | Website | rusBEIR-Name | Domain | Public? | Type | Splits | Queries  | Corpus | Download | 
 | -------- | -----| ---------| ------- | --------- |----------- | ----------- | ----------- |----------- | ------------------ |
 | rus-MMARCO <br> (Russian part of mmarco) | [Homepage of original](https://huggingface.co/datasets/unicamp-dl/mmarco)| ``rus-mmmarco`` | Information Retrieval |✅ | Part of multilingual |``dev``<br>``train``|  ``dev:`` 6,980 <br><br> ``train:`` 502,939   |  8.84M     | [rus-mmarco-google](https://huggingface.co/datasets/kngrg/rus-mmarco-google) <br> <br> [rus-mmarco-helsinki](https://huggingface.co/datasets/kngrg/rus-mmarco-helsinki) |
