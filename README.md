@@ -44,22 +44,18 @@ After docker installation, please follow the steps below to get docker container
 
 
 from rusBeIR.beir.datasets.data_loader_hf import HFDataLoader
+from rusBeIR.beir.retrieval.search.lexical import BM25Search as BM25
 from rusBeIR.beir.retrieval.evaluation import EvaluateRetrieval
-from rusBeIR.beir.retrieval.search.dense import DenseRetrievalExactSearch as DRES
 
 #### Load dataset via HF 
 corpus, queries, qrels = HFDataLoader(hf_repo="kngrg/rus-scifact", hf_repo_qrels="kngrg/rus-scifact-qrels", streaming=False,
                                        keep_in_memory=False).load(split='train') # select necessary split train/test/dev
 
-#### Initialize BM25 model
-from rusBeIR.beir.retrieval.search.lexical import BM25Search as BM25
-from rusBeIR.beir.retrieval.evaluation import EvaluateRetrieval
-
 #### Provide parameters for elastic-search
 hostname = "localhost:9200"
 index_name = "mmarco" 
 
-#### Index dataset and retrieve documents
+#### Initialize BM25 model and retrieve documents 
 model = BM25(index_name=index_name, hostname=hostname, initialize=True)
 retriever = EvaluateRetrieval(model)
 results = retriever.retrieve(corpus, queries)
