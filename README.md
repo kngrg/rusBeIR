@@ -1,6 +1,8 @@
+## What is it?
+
 rusBeIR is a [BeIR](https://github.com/beir-cellar/beir)-based Information Retrieval benchmark for Russian language.
 It contains 10 datasets from different domains and more datasets will be added in future. Some of these datasets are parts of multilingual datasets, other are translated from the original ones or were originally in russian. 
-
+## Baselines
 Baselines could be found [here](https://docs.google.com/document/d/1F1zHZm36eiK_uhiptbDWAOCyXInBaXQ1ZkpZMLx9eEc/edit?usp=sharing).
 ## Installation 
 ``` python
