@@ -6,7 +6,7 @@ It contains 10 datasets from different domains and more datasets will be added i
 Baselines could be found [here](https://docs.google.com/spreadsheets/d/19jUZigy-AolNOOhT0EzNggiRoEcvfqL7HRpq0bwHqXc/edit?usp=sharing).
 ## Installation 
 ``` python
-!git clone git@github.com:kngrg/rusBeIR.git
+!git clone https://github.com/kngrg/rusBeIR.git
 ``` 
 
 ##  Available Datasets
@@ -48,8 +48,8 @@ from rusBeIR.beir.retrieval.evaluation import EvaluateRetrieval
 from rusBeIR.beir.retrieval.search.dense import DenseRetrievalExactSearch as DRES
 
 #### Load dataset via HF 
-corpus, queries, qrels = HFDataLoader(hf_repo="kngrg/rus-mmarco", hf_repo_qrels="kngrg/rus-mmarco", streaming=False,
-                                       keep_in_memory=False).load(split='test') # select necessary split train/test/dev
+corpus, queries, qrels = HFDataLoader(hf_repo="kngrg/rus-scifact", hf_repo_qrels="kngrg/rus-scifact-qrels", streaming=False,
+                                       keep_in_memory=False).load(split='train') # select necessary split train/test/dev
 
 #### Initialize BM25 model
 from rusBeIR.beir.retrieval.search.lexical import BM25Search as BM25
@@ -69,4 +69,12 @@ ndcg, _map, recall, precision = retriever.evaluate(qrels, results, retriever.k_v
 
 #### Evaluate your model with MRR@k where k = [1,3,5,10,100,1000]
 mrr = retriever.evaluate_custom(qrels, results, retriever.k_values, "mrr")
+
+
+metrics = {"ndcg": ndcg, "_map": _map, "recall": recall, "precision": precision, "mrr": mrr}
+
+for metric in metrics.keys():
+    for it_num, it_val in zip(metrics[metric], metrics[metric].values()):
+        print(it_num, it_val )
+    print('\n')
 ```
