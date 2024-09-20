@@ -1,4 +1,10 @@
 datasets
 elasticsearch==7.9.1
 pytrec_eval
-
+pymorphy3
+nltk
+pandas
+tensorflow
+scikit-learn==1.5.1
+sentence-transformers==3.1.0
+scipy==1.14.0
