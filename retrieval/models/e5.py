@@ -33,15 +33,15 @@ class E5Model:
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = AutoModel.from_pretrained(model_name).to(device)
 
-    def encode_queries(self, queries: List[str], batch_size: int = 128) -> np.ndarray:
+    def encode_queries(self, queries: List[str]) -> torch.Tensor:
         queries = [f"query: {query.strip()}" for query in queries]
-        return self._get_embeddings_full(queries, batch_size=batch_size)
+        return self._get_embeddings_full(queries)
 
-    def encode_passages(self, passages: List[str], batch_size: int = 128) -> np.ndarray:
+    def encode_passages(self, passages: List[str], batch_size: int = 128) -> torch.Tensor:
         passages = [f"passage: {passage.strip()}" for passage in passages]
         return self._get_embeddings(passages, batch_size=batch_size)
 
-    def _get_embeddings(self, texts: List[str], batch_size: int = 128) -> np.ndarray:
+    def _get_embeddings(self, texts: List[str], batch_size: int = 128) -> torch.Tensor:
         embeddings = []
         for i in tqdm(range(0, len(texts), batch_size), desc="Processing Batches"):
             batch_texts = texts[i:i + batch_size]
@@ -63,7 +63,7 @@ class E5Model:
 
     def retrieve(self, queries: List[str], corpus_emb: np.ndarray, corpus_ids: List[str], batch_size: int = 128,
                  top_n: int = 1000) -> Dict[str, Dict[str, float]]:
-        query_embs = self.encode_queries(queries, batch_size=batch_size)
+        query_embs = self.encode_queries(queries)
 
         results = {}
         similarities = cosine_similarity(query_embs, corpus_emb)
