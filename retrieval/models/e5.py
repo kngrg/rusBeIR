@@ -53,9 +53,9 @@ class E5Model:
 
             batch_embeddings = self._average_pool(outputs.last_hidden_state, batch_dict['attention_mask'])
             batch_embeddings = F.normalize(batch_embeddings, p=2, dim=1)
-            embeddings.append(batch_embeddings.cpu().numpy())
+            embeddings.append(batch_embeddings.cpu())
 
-        return np.vstack(embeddings)
+        return torch.cat(embeddings, dim=0)
 
     def _average_pool(self, last_hidden_states: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
         last_hidden = last_hidden_states.masked_fill(~attention_mask[..., None].bool(), 0.0)
