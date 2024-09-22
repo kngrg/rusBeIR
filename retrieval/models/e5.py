@@ -61,12 +61,16 @@ class E5Model:
         last_hidden = last_hidden_states.masked_fill(~attention_mask[..., None].bool(), 0.0)
         return last_hidden.sum(dim=1) / attention_mask.sum(dim=1)[..., None]
 
-    def retrieve(self, queries: List[str], corpus_emb: np.ndarray, corpus_ids: List[str], batch_size: int = 128,
+    def retrieve(self, queries: List[str], corpus_emb: torch.Tensor, corpus_ids: List[str], batch_size: int = 128,
                  top_n: int = 1000) -> Dict[str, Dict[str, float]]:
         query_embs = self.encode_queries(queries)
 
         results = {}
-        similarities = cosine_similarity(query_embs, corpus_emb)
+        query_embs = query_embs.unsqueeze(1)
+        corpus_emb = corpus_emb.unsqueeze(0)
+
+        similarities = F.cosine_similarity(query_embs, corpus_emb, dim=2)  
+        similarities = similarities.cpu().detach().numpy()
 
         for idx, query in enumerate(queries):
             query_similarities = similarities[idx].flatten()
