@@ -69,7 +69,7 @@ class E5Model:
         query_embs = query_embs.unsqueeze(1)
         corpus_emb = corpus_emb.unsqueeze(0)
 
-        similarities = F.cosine_similarity(query_embs, corpus_emb, dim=2)  
+        similarities = F.cosine_similarity(query_embs, corpus_emb, dim=2)
         similarities = similarities.cpu().detach().numpy()
 
         for idx, query in enumerate(queries):
@@ -89,4 +89,4 @@ class E5Model:
         embeddings = self._average_pool(outputs.last_hidden_state, batch_dict['attention_mask'])
         embeddings = F.normalize(embeddings, p=2, dim=1)
 
-        return embeddings
+        return embeddings.cpu()
