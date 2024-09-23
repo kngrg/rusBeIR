@@ -27,8 +27,9 @@ Baselines could be found [here](https://docs.google.com/spreadsheets/d/19jUZigy-
 All datasets are available at [HuggingFace](https://huggingface.co/collections/kngrg/rusbeir-66e28cb06e3e074be55ac0f3).
 
 
-##  Quick Example
+##  Examples 
 
+### BM25 model
 ```python
 """
 This example shows how to evaluate ElasticSearch-BM25 in rusBeIR.
@@ -49,7 +50,7 @@ from rusBeIR.beir.retrieval.evaluation import EvaluateRetrieval
 
 #### Load dataset via HF 
 corpus, queries, qrels = HFDataLoader(hf_repo="kngrg/rus-scifact", hf_repo_qrels="kngrg/rus-scifact-qrels", streaming=False,
-                                       keep_in_memory=False).load(split='train') # select necessary split train/test/dev
+                                       keep_in_memory=False).load(split='test') # select necessary split train/test/dev
 
 #### Provide parameters for elastic-search
 hostname = "localhost:9200"
@@ -66,6 +67,31 @@ ndcg, _map, recall, precision = retriever.evaluate(qrels, results, retriever.k_v
 #### Evaluate your model with MRR@k where k = [1,3,5,10,100,1000]
 mrr = retriever.evaluate_custom(qrels, results, retriever.k_values, "mrr")
 
+
+metrics = {"ndcg": ndcg, "_map": _map, "recall": recall, "precision": precision, "mrr": mrr}
+
+for metric in metrics.keys():
+    for it_num, it_val in zip(metrics[metric], metrics[metric].values()):
+        print(it_num, it_val )
+    print('\n')
+```
+### E5 model 
+``` python
+from rusBeIR.beir.datasets.data_loader_hf import HFDataLoader
+from rusBeIR.retrieval.models.e5 import E5Model
+from rusBeIR.beir.retrieval.evaluation import EvaluateRetrieval
+
+corpus, queries, qrels = HFDataLoader(hf_repo="kngrg/rus-scifact", hf_repo_qrels="kngrg/rus-scifact-qrels", streaming=False,
+                                       keep_in_memory=False).load(split='test')
+
+e5 = E5Model()
+corpus_emb = e5.encode_passages(corpus)
+results = e5.retrieve(queries, corpus_emb, corpus.keys())
+
+retriever = EvaluateRetrieval(k_values=[1,3,5,10, 100, 1000])
+
+ndcg, _map, recall, precision = retriever.evaluate(qrels, results, retriever.k_values)
+mrr = retriever.evaluate_custom(qrels, results, retriever.k_values, "mrr")
 
 metrics = {"ndcg": ndcg, "_map": _map, "recall": recall, "precision": precision, "mrr": mrr}
 
