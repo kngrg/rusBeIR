@@ -14,15 +14,15 @@ class DatasetEvaluator:
         metrics = ['NDCG', 'MAP', 'Recall', 'P', 'MRR']
 
         self.datasets = {'rus-mmarco': ('kngrg/rus-mmarco-google', 'kngrg/rus-mmarco-qrels', 'dev'),
-                         'rus-scifact': ('kngrg/rus-scifact', 'kngrg/rus-scifact-qrels'),
-                         'rus-arguana': ('kngrg/rus-arguana', 'kngrg/rus-arguana-qrels'),
-                         'rus-nfcorpus': ('kngrg/rus-nfcorpus', 'kngrg/rus-nfcorpus-qrels'),
-                         'rus-miracl': ('kngrg/rus-miracl', 'kngrg/rus-miracl-qrels'),
-                         'rus-xquad': ('kngrg/rus-xquad', 'kngrg/rus-xquad-qrels'),
-                         'rus-xquad-sentenes': ('kngrg/rus-xquad-sentences', 'kngrg/rus-xquad-sentences-qrels'),
-                         'rus-tydiqa': ('kngrg/rus-tydiqa', 'kngrg/rus-tydiqa-qrels'),
-                         'rubq': ('kngrg/rubq', 'kngrg/rubq-qrels'),
-                         'ria-news': ('kngrg/ria-news', 'kngrg/ria-news-qrels')}
+                         'rus-scifact': ('kngrg/rus-scifact', 'kngrg/rus-scifact-qrels', 'test'),
+                         'rus-arguana': ('kngrg/rus-arguana', 'kngrg/rus-arguana-qrels', 'test'),
+                         'rus-nfcorpus': ('kngrg/rus-nfcorpus', 'kngrg/rus-nfcorpus-qrels', 'test'),
+                         'rus-miracl': ('kngrg/rus-miracl', 'kngrg/rus-miracl-qrels', 'dev'),
+                         'rus-xquad': ('kngrg/rus-xquad', 'kngrg/rus-xquad-qrels', 'dev'),
+                         'rus-xquad-sentenes': ('kngrg/rus-xquad-sentences', 'kngrg/rus-xquad-sentences-qrels', 'dev'),
+                         'rus-tydiqa': ('kngrg/rus-tydiqa', 'kngrg/rus-tydiqa-qrels', 'dev'),
+                         'rubq': ('kngrg/rubq', 'kngrg/rubq-qrels', 'test'),
+                         'ria-news': ('kngrg/ria-news', 'kngrg/ria-news-qrels', 'test')}
 
         self.metrics = metrics
         self.k_values = k_values
