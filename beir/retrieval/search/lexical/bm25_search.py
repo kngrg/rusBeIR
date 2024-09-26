@@ -10,12 +10,12 @@ def sleep(seconds):
 class BM25Search(BaseSearch):
     def __init__(self, index_name: str, hostname: str = "localhost", keys: Dict[str, str] = {"title": "title", "body": "txt"}, language: str = "english",
                  batch_size: int = 128, timeout: int = 1000, retry_on_timeout: bool = True, maxsize: int = 24, number_of_shards: int = "default",
-                 initialize: bool = True, sleep_for: int = 2):
-        keys["body"] = "processed_text"
-        #keys["body"] = "text"
+                 initialize: bool = True, sleep_for: int = 2, text_type: str = 'processed_text'):
+        keys["body"] = text_type
         self.results = {}
         self.batch_size = batch_size
         self.initialize = initialize
+        self.text_type = text_type
         self.sleep_for = sleep_for
         self.config = {
             "hostname": hostname, 
@@ -68,9 +68,11 @@ class BM25Search(BaseSearch):
     def index(self, corpus: Dict[str, Dict[str, str]]):
         progress = tqdm.tqdm(unit="docs", total=len(corpus))
         # dictionary structure = {_id: {title_key: title, text_key: text}}
+
         dictionary = {idx: {
-            self.config["keys"]["title"]: corpus[idx].get("title", None), 
-            self.config["keys"]["body"]: corpus[idx].get("processed_text", None)
+            self.config["keys"]["title"]: corpus[idx].get("title", None),
+
+            self.config["keys"]["body"]: corpus[idx].get(self.text_type, None)
             #self.config["keys"]["body"]: corpus[idx].get("text", None)
         } for idx in list(corpus.keys())
         }
