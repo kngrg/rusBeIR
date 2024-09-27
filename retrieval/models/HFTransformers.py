@@ -56,6 +56,14 @@ class HFTransformers:
         return results
 
     def _get_embeddings(self, texts: List[str], batch_size: int = 128, max_len: int = 512, pooling_method: str = 'average'):
+        """
+        Get embeddings for given texts
+        :param texts: list of texts to encode
+        :param batch_size:
+        :param max_len: max length for tokenizer
+        :param pooling_method: 'average' or 'cls' are available by default
+        :return: np.ndarray with embeddings
+        """
 
         embeddings = []
         for i in tqdm(range(0, len(texts), batch_size), desc="Processing Batches"):
