@@ -37,6 +37,23 @@ class HFTransformers:
         """
         return self._get_embeddings(passages, batch_size)
 
+    def retrieve(self, queries: Dict[str, str], corpus_emb: np.ndarray, corpus_ids: List[str],
+                 top_n: int = 100) -> Dict[str, Dict[str, float]]:
+
+        results = {}
+
+        for queries, query_ids in tqdm(zip(queries.values(), queries.keys()), desc="Processing Queries"):
+            query_embs = self.encode_queries(queries)
+            query_embs = query_embs.cpu().numpy()
+            similarities = cosine_similarity(query_embs, corpus_emb)
+
+            for idx, query_id in enumerate(query_ids):
+                query_similarities = similarities[idx].flatten()
+                top_n_indices = query_similarities.argsort()[-top_n:][::-1]
+                top_n_results = {corpus_ids[j]: float(query_similarities[j]) * 100 for j in top_n_indices}
+                results[query_id] = top_n_results
+        return results
+
     def _get_embeddings(self, texts: List[str], batch_size: int = 128):
 
         embeddings = []
