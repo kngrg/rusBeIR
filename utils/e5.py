@@ -7,7 +7,7 @@ import numpy as np
 from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModel
 import logging
-from typing import List, Dict, Union, Tuple
+from typing import List, Dict
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
