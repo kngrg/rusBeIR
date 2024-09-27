@@ -30,7 +30,7 @@ class E5Model(HFTransformers):
 
     def encode_queries(self, queries: List[str]):
         queries = [f"query: {query}" for query in queries]
-        return self._get_embeddings_full(queries)
+        return self._get_embeddings_full(queries, max_len=512)
 
     def encode_passages(self, corpus: Dict[str, Dict[str, str]], batch_size: int = 128):
         passages = [f"passage: {doc['text']}" for doc in corpus.values()]
@@ -60,8 +60,8 @@ class E5Model(HFTransformers):
                 results[query_id] = top_n_results
         return results
 
-    def _get_embeddings_full(self, texts: List[str]):
-        batch_dict = self.tokenizer(texts, max_length=512, padding=True, truncation=True, return_tensors='pt')
+    def _get_embeddings_full(self, texts: List[str], max_len: int = 512):
+        batch_dict = self.tokenizer(texts, max_length=max_len, padding=True, truncation=True, return_tensors='pt')
         batch_dict = {k: v.to(self.device) for k, v in batch_dict.items()}
         with torch.no_grad():
             outputs = self.model(**batch_dict)
