@@ -14,7 +14,7 @@ from datasets import load_dataset
 retriever = EvaluateRetrieval()
 
 class DatasetEvaluator:
-    def __init__(self, model_name='bm25', k_values=[1, 3, 5, 10, 100], result_path=Path('rusBeIR-results')):
+    def __init__(self, model_name='bm25', k_values=[1, 3, 5, 10, 100]):
 
         metrics = ['NDCG', 'MAP', 'Recall', 'P', 'MRR']
 
@@ -32,8 +32,7 @@ class DatasetEvaluator:
         self.metrics = metrics
         self.k_values = k_values
         self.model_type = model_name
-        self.results_dir = Path(result_path)
-        self.results_dir.mkdir(exist_ok=True)
+        self.results_dir = Path('rusBeIR-results')
         self.model = None
 
         self.ndcg_sum = dict.fromkeys([f'NDCG@{k}' for k in k_values], 0)
@@ -42,7 +41,10 @@ class DatasetEvaluator:
         self.precision_sum = dict.fromkeys([f'P@{k}' for k in k_values], 0)
         self.mrr_sum = dict.fromkeys([f'MRR@{k}' for k in k_values], 0)
 
-    def retrieve(self, text_type: str = 'processed_text'):
+    def retrieve(self, text_type: str = 'processed_text', results_path=Path('rusBeIR-results')):
+        self.results_dir = Path(results_path)
+        self.results_dir.mkdir(exist_ok=True)
+
         for dataset_name, args in tqdm(self.datasets.items(), desc="Processing datasets"):
             corpus, queries, _ = HFDataLoader(hf_repo=args[0], hf_repo_qrels=args[1],
                 streaming=False, keep_in_memory=False, text_type=text_type).load(split=args[2])
