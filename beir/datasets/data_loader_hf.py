@@ -10,10 +10,11 @@ logger = logging.getLogger(__name__)
 class HFDataLoader:
     
     def __init__(self, hf_repo: str = None, hf_repo_qrels: str = None, data_folder: str = None, prefix: str = None, corpus_file: str = "corpus.jsonl", query_file: str = "queries.jsonl", 
-                 qrels_folder: str = "qrels", qrels_file: str = "", streaming: bool = False, keep_in_memory: bool = False):
+                 qrels_folder: str = "qrels", qrels_file: str = "", streaming: bool = False, keep_in_memory: bool = False, text_type: str='processed_text'):
         self.corpus = {}
         self.queries = {}
         self.qrels = {}
+        self.text_type = text_type
         self.hf_repo = hf_repo
         if hf_repo:
             logger.warn("A huggingface repository is provided. This will override the data_folder, prefix and *_file arguments.")
@@ -104,9 +105,8 @@ class HFDataLoader:
         corpus_dict = {}
         for record in corpus_ds:
             corpus_dict[record['id']] = {
-                'text': record['text'],
-                'title': record['title'],
-                'processed_text': record['processed_text']
+                'text': record[self.text_type],
+                'title': record['title']
             }
         self.corpus = corpus_dict
     
@@ -122,7 +122,7 @@ class HFDataLoader:
 
         queries_dict = {}
         for record in queries_ds:
-            queries_dict[record['id']] = record['processed_text']
+            queries_dict[record['id']] = record[self.text_type]
             #queries_dict[record['id']] = record['text']
 
 
