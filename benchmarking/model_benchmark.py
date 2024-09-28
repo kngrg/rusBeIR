@@ -1,7 +1,7 @@
 from rusBeIR.beir.datasets.data_loader_hf import HFDataLoader
 from rusBeIR.beir.retrieval.search.lexical import BM25Search as BM25
 from rusBeIR.beir.retrieval.evaluation import EvaluateRetrieval
-from rusBeIR.retrieval.models.E5Model import E5Model
+from rusBeIR.retrieval.models.HFTransformers import HFTransformers
 from tqdm import tqdm
 import json
 from pathlib import Path
@@ -14,7 +14,7 @@ from datasets import load_dataset
 retriever = EvaluateRetrieval()
 
 class DatasetEvaluator:
-    def __init__(self, model_name='bm25', k_values=[1, 3, 5, 10, 100]):
+    def __init__(self, model, k_values=[1, 3, 5, 10, 100]):
 
         metrics = ['NDCG', 'MAP', 'Recall', 'P', 'MRR']
 
@@ -31,9 +31,8 @@ class DatasetEvaluator:
 
         self.metrics = metrics
         self.k_values = k_values
-        self.model_type = model_name
         self.results_dir = Path('rusBeIR-results')
-        self.model = None
+        self.model = model
 
         self.ndcg_sum = dict.fromkeys([f'NDCG@{k}' for k in k_values], 0)
         self.map_sum = dict.fromkeys([f'MAP@{k}' for k in k_values], 0)
@@ -49,16 +48,14 @@ class DatasetEvaluator:
             corpus, queries, _ = HFDataLoader(hf_repo=args[0], hf_repo_qrels=args[1],
                 streaming=False, keep_in_memory=False, text_type=text_type).load(split=args[2])
 
-            if self.model_type == 'bm25':
+            if isinstance(self.model, BM25):
                 hostname = "localhost:9200"
                 index_name = dataset_name
                 self.model = BM25(index_name=index_name, hostname=hostname, initialize=True)
                 retriever = EvaluateRetrieval(retriever=self.model, k_values=self.k_values)
                 results = retriever.retrieve(corpus, queries)
-
-            elif self.model_type == 'e5':
-                self.model = E5Model()
-                corpus_emb = self.model.encode_passages(corpus)
+            elif isinstance(self.model, HFTransformers):
+                corpus_emb = self.model.encode_passages([doc['text'] for doc in corpus.values()])
                 results = self.model.retrieve(queries, corpus_emb, list(corpus.keys()))
 
             out_file = self.results_dir / f"results_{dataset_name}_{args[2]}.json"
@@ -66,8 +63,9 @@ class DatasetEvaluator:
                 json.dump(results, f, ensure_ascii=False, indent=4)
 
 
-    def evaluate(self):
-        evaluator = EvaluateRetrieval()
+    def evaluate(self, results_path):
+        self.results_dir = results_path
+        retriever = EvaluateRetrieval()
         processed_datasets = 0
 
         for dataset_name, args in tqdm(self.datasets.items(), desc="Evaluating results"):
@@ -84,7 +82,7 @@ class DatasetEvaluator:
             qrels_dict = {str(qid): {str(cid): int(score)} for qid, cid, score in
                           zip(qrels['query-id'], qrels['corpus-id'], qrels['score'])}
 
-            ndcg, _map, recall, precision = evaluator.evaluate(qrels=qrels_dict, results=results, k_values=self.k_values)
+            ndcg, _map, recall, precision = retriever.evaluate(qrels=qrels_dict, results=results, k_values=self.k_values)
             mrr = retriever.evaluate_custom(qrels_dict, results, self.k_values, "mrr")
 
             for k in self.k_values:
@@ -108,7 +106,8 @@ class DatasetEvaluator:
                 "map": map_avg,
                 "recall": recall_avg,
                 "precision": precision_avg,
-                "mrr": mrr_avg
+                "mrr": mrr_avg,
+                "processed": processed_datasets
             }
         else:
             print("None of results were retrieved.")

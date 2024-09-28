@@ -32,8 +32,8 @@ class E5Model(HFTransformers):
         queries = [f"query: {query}" for query in queries]
         return self._get_embeddings_full(queries, max_len=512)
 
-    def encode_passages(self, corpus: Dict[str, Dict[str, str]], batch_size: int = 128):
-        passages = [f"passage: {doc['text']}" for doc in corpus.values()]
+    def encode_passages(self, corpus: List[str], batch_size: int = 128):
+        passages = [f"passage: {doc}" for doc in corpus]
         return super().encode_passages(passages, batch_size)
 
     def retrieve(self, queries: Dict[str, str], corpus_emb: np.ndarray, corpus_ids: List[str],
