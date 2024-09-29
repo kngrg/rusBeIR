@@ -5,13 +5,15 @@ from rusBeIR.retrieval.models.HFTransformers import HFTransformers
 from tqdm import tqdm
 import json
 from pathlib import Path
+from datasets import load_dataset, Value, Features
 from datasets import load_dataset
-
+from collections import defaultdict
 
 # datasets is a list of datasets which are currently included in this benchmark
 # elements are {'dataset_name' :(hf_corpus&queries_repo, hf_qrels_repo, split)}
 
 retriever = EvaluateRetrieval()
+
 
 class DatasetEvaluator:
     def __init__(self, model, k_values=[1, 3, 5, 10, 100]):
@@ -33,6 +35,7 @@ class DatasetEvaluator:
         self.k_values = k_values
         self.results_dir = Path('rusBeIR-results')
         self.model = model
+        self.processed = 0
 
         self.ndcg_sum = dict.fromkeys([f'NDCG@{k}' for k in k_values], 0)
         self.map_sum = dict.fromkeys([f'MAP@{k}' for k in k_values], 0)
@@ -46,7 +49,8 @@ class DatasetEvaluator:
 
         for dataset_name, args in tqdm(self.datasets.items(), desc="Processing datasets"):
             corpus, queries, _ = HFDataLoader(hf_repo=args[0], hf_repo_qrels=args[1],
-                streaming=False, keep_in_memory=False, text_type=text_type).load(split=args[2])
+                                              streaming=False, keep_in_memory=False, text_type=text_type).load(
+                split=args[2])
 
             if isinstance(self.model, BM25):
                 hostname = "localhost:9200"
@@ -62,10 +66,9 @@ class DatasetEvaluator:
             with out_file.open('w', encoding='utf-8') as f:
                 json.dump(results, f, ensure_ascii=False, indent=4)
 
-
     def evaluate(self, results_path):
-        self.results_dir = results_path
-        retriever = EvaluateRetrieval()
+        self.results_dir = Path(results_path)
+        retriever = EvaluateRetrieval(k_values=self.k_values)
         processed_datasets = 0
 
         for dataset_name, args in tqdm(self.datasets.items(), desc="Evaluating results"):
@@ -78,11 +81,15 @@ class DatasetEvaluator:
             with result_file.open('r', encoding='utf-8') as f:
                 results = json.load(f)
 
-            qrels = load_dataset(args[1])[args[2]]
-            qrels_dict = {str(qid): {str(cid): int(score)} for qid, cid, score in
-                          zip(qrels['query-id'], qrels['corpus-id'], qrels['score'])}
+            def qrels_dict_init(row):
+                qrels_dict[row['query-id']][row['corpus-id']] = int(row['score'])
 
-            ndcg, _map, recall, precision = retriever.evaluate(qrels=qrels_dict, results=results, k_values=self.k_values)
+            qrels_ds = load_dataset(args[1])[args[2]]
+            qrels_dict = defaultdict(dict)
+            qrels_ds.map(qrels_dict_init)
+            qrels = qrels_dict
+
+            ndcg, _map, recall, precision = retriever.evaluate(qrels=qrels, results=results, k_values=self.k_values)
             mrr = retriever.evaluate_custom(qrels_dict, results, self.k_values, "mrr")
 
             for k in self.k_values:
@@ -106,9 +113,9 @@ class DatasetEvaluator:
                 "map": map_avg,
                 "recall": recall_avg,
                 "precision": precision_avg,
-                "mrr": mrr_avg,
-                "processed": processed_datasets
+                "mrr": mrr_avg
             }
+            self.processed = processed_datasets
         else:
             print("None of results were retrieved.")
             self.metrics_results = {}
@@ -123,3 +130,4 @@ class DatasetEvaluator:
             for k, val in results.items():
                 print(f"{k}: {val}")
             print('\n')
+        print(self.processed)
