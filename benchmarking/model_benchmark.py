@@ -53,9 +53,8 @@ class DatasetEvaluator:
                 split=args[2])
 
             if isinstance(self.model, BM25):
-                hostname = "localhost:9200"
                 index_name = dataset_name
-                self.model = BM25(index_name=index_name, hostname=hostname, initialize=True)
+                self.model = BM25(index_name=index_name, hostname=self.model.config['hostname'], initialize=True)
                 retriever = EvaluateRetrieval(retriever=self.model, k_values=self.k_values)
                 results = retriever.retrieve(corpus, queries)
             elif isinstance(self.model, HFTransformers):
@@ -112,7 +111,7 @@ class DatasetEvaluator:
                 "Precision": precision_avg,
                 "MRR": mrr_avg
             }
-            
+
         else:
             print("None of results were retrieved.")
             self.metrics_results = {}
