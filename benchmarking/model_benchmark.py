@@ -29,13 +29,13 @@ class DatasetEvaluator:
                          'rus-xquad-sentenes': ('kngrg/rus-xquad-sentences', 'kngrg/rus-xquad-sentences-qrels', 'dev'),
                          'rus-tydiqa': ('kngrg/rus-tydiqa', 'kngrg/rus-tydiqa-qrels', 'dev'),
                          'rubq': ('kngrg/rubq', 'kngrg/rubq-qrels', 'test'),
-                         'ria-news': ('kngrg/ria-news', 'kngrg/ria-news-qrels', 'test')}
+                         'ria-news': ('kngrg/ria-news', 'kngrg/ria-news-qrels', 'test')
+                         }
 
         self.metrics = metrics
         self.k_values = k_values
         self.results_dir = Path('rusBeIR-results')
         self.model = model
-        self.processed = 0
 
         self.ndcg_sum = dict.fromkeys([f'NDCG@{k}' for k in k_values], 0)
         self.map_sum = dict.fromkeys([f'MAP@{k}' for k in k_values], 0)
@@ -81,16 +81,13 @@ class DatasetEvaluator:
             with result_file.open('r', encoding='utf-8') as f:
                 results = json.load(f)
 
-            def qrels_dict_init(row):
-                qrels_dict[row['query-id']][row['corpus-id']] = int(row['score'])
-
             qrels_ds = load_dataset(args[1])[args[2]]
-            qrels_dict = defaultdict(dict)
-            qrels_ds.map(qrels_dict_init)
-            qrels = qrels_dict
+            qrels = defaultdict(dict)
+            for row in qrels_ds:
+                qrels[str(row['query-id'])][str(row['corpus-id'])] = int(row['score'])
 
             ndcg, _map, recall, precision = retriever.evaluate(qrels=qrels, results=results, k_values=self.k_values)
-            mrr = retriever.evaluate_custom(qrels_dict, results, self.k_values, "mrr")
+            mrr = retriever.evaluate_custom(qrels, results, self.k_values, "mrr")
 
             for k in self.k_values:
                 self.ndcg_sum[f'NDCG@{k}'] += ndcg[f'NDCG@{k}']
@@ -109,13 +106,13 @@ class DatasetEvaluator:
             mrr_avg = {f'MRR@{k}': self.mrr_sum[f'MRR@{k}'] / processed_datasets for k in self.k_values}
 
             self.metrics_results = {
-                "ndcg": ndcg_avg,
-                "map": map_avg,
-                "recall": recall_avg,
-                "precision": precision_avg,
-                "mrr": mrr_avg
+                "NDCG": ndcg_avg,
+                "MAP": map_avg,
+                "Recall": recall_avg,
+                "Precision": precision_avg,
+                "MRR": mrr_avg
             }
-            self.processed = processed_datasets
+            
         else:
             print("None of results were retrieved.")
             self.metrics_results = {}
@@ -130,4 +127,3 @@ class DatasetEvaluator:
             for k, val in results.items():
                 print(f"{k}: {val}")
             print('\n')
-        print(self.processed)
