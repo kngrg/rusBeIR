@@ -30,6 +30,7 @@ All datasets are available at [HuggingFace](https://huggingface.co/collections/k
 ##  Examples 
 
 ### BM25 model
+This example shows how to evaluate one dataset using BM25 model with ElasticSearch
 ```python
 """
 This example shows how to evaluate ElasticSearch-BM25 in rusBeIR.
@@ -75,7 +76,22 @@ for metric in metrics.keys():
         print(it_num, it_val )
     print('\n')
 ```
+
+This example shows how to evaluate all datasets using BM25 model with ElasticSearch
+``` python
+from rusBeIR.benchmarking.model_benchmark import DatasetEvaluator
+from rusBeIR.beir.retrieval.search.lexical import BM25Search as BM25
+
+bm25 = BM25(index_name="bm25", hostname="localhost:9200", initialize=True)
+evaluator = DatasetEvaluator(model=bm25)
+
+evaluator.retrieve(text_type='processed_text', results_path='rusBeIR-results)
+evaluator.evaluate(results_path='rusBeIR-results')
+evaluator.print_results()
+```
+
 ### E5 model 
+This example shows how to evaluate one dataset using E5 model
 ``` python
 from rusBeIR.beir.datasets.data_loader_hf import HFDataLoader
 from rusBeIR.retrieval.models.e5 import E5Model
@@ -99,4 +115,16 @@ for metric in metrics.keys():
     for it_num, it_val in zip(metrics[metric], metrics[metric].values()):
         print(it_num, it_val )
     print('\n')
+```
+This example shows how to evaluate all datasets using E5 model
+``` python
+from rusBeIR.benchmarking.model_benchmark import DatasetEvaluator
+from rusBeIR.retrieval.models.E5Model import E5Model
+
+e5 = E5Model()
+evaluator = DatasetEvaluator(model=e5)
+
+evaluator.retrieve(text_type='processed_text', results_path="rusBeIR-e5-results")
+evaluator.evaluate(results_path="rusBeIR-e5-results")
+evaluator.print_results()
 ```
