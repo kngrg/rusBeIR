@@ -65,7 +65,7 @@ class DatasetEvaluator:
             with out_file.open('w', encoding='utf-8') as f:
                 json.dump(results, f, ensure_ascii=False, indent=4)
 
-    def evaluate(self, results_path):
+    def evaluate(self, results_path=Path('rusBeIR-results')):
         self.results_dir = Path(results_path)
         retriever = EvaluateRetrieval(k_values=self.k_values)
         processed_datasets = 0
