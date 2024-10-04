@@ -3,7 +3,7 @@ from rusBeIR.retrieval.models.HFTransformers import HFTransformers
 
 
 class BGETransformers(HFTransformers):
-    def __init__(self, model_name: str='deepvk/USER-bge-m3', device: str = 'cuda'):
+    def __init__(self, model_name: str='cointegrated/LaBSE-en-ru', device: str = 'cuda'):
         """
         :param model_name: Name of the pre-trained BGE model from HF.
         :param device: Where to run the model ('cuda' or 'cpu').
