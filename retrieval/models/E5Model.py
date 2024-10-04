@@ -25,12 +25,12 @@ class QueryDataset(Dataset):
 
 
 class E5Model(HFTransformers):
-    def __init__(self, model_name: str = 'intfloat/multilingual-e5-large', device: str = 'cuda'):
-        super().__init__(model_name, device)
+    def __init__(self, model_name: str = 'intfloat/multilingual-e5-large', maxlen: int = 512, device: str = 'cuda'):
+        super().__init__(model_name, maxlen=maxlen, device=device)
 
     def encode_queries(self, queries: List[str]):
         queries = [f"query: {query}" for query in queries]
-        return self._get_embeddings_full(queries, max_len=512)
+        return self._get_embeddings_full(queries)
 
     def encode_passages(self, corpus: List[str], batch_size: int = 128):
         passages = [f"passage: {doc}" for doc in corpus]
@@ -60,8 +60,8 @@ class E5Model(HFTransformers):
                 results[query_id] = top_n_results
         return results
 
-    def _get_embeddings_full(self, texts: List[str], max_len: int = 512):
-        batch_dict = self.tokenizer(texts, max_length=max_len, padding=True, truncation=True, return_tensors='pt')
+    def _get_embeddings_full(self, texts: List[str]):
+        batch_dict = self.tokenizer(texts, max_length=self.max_len, padding=True, truncation=True, return_tensors='pt')
         batch_dict = {k: v.to(self.device) for k, v in batch_dict.items()}
         with torch.no_grad():
             outputs = self.model(**batch_dict)
