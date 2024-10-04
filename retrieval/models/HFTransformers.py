@@ -6,6 +6,21 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 from tqdm import tqdm
 from typing import List, Dict
+import os
+
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+
+class QueryDataset(Dataset):
+    def __init__(self, queries, queries_ids):
+        self.queries = queries
+        self.query_ids = queries_ids
+
+    def __len__(self):
+        return len(self.queries)
+
+    def __getitem__(self, idx):
+        return self.queries[idx], self.query_ids[idx]
 
 
 class HFTransformers:
@@ -41,14 +56,20 @@ class HFTransformers:
     def retrieve(self, queries: Dict[str, str], corpus_emb: np.ndarray, corpus_ids: List[str],
                  top_n: int = 100) -> Dict[str, Dict[str, float]]:
 
+        batch_size = 16
+        num_workers = 4
+        top_n = top_n
+
+        query_dataset = QueryDataset(list(queries.values()), list(queries.keys()))
+        data_loader = DataLoader(query_dataset, batch_size=batch_size, num_workers=num_workers, pin_memory=True)
+
         results = {}
 
-        for queries, query_ids in tqdm(zip(queries.values(), queries.keys()), desc="Processing Queries"):
-            query_embs = self.encode_queries(queries)
-            query_embs = query_embs.cpu().numpy()
+        for batch_queries, batch_query_ids in tqdm(data_loader, desc="Processing Queries"):
+            query_embs = self.encode_queries(batch_queries)
             similarities = cosine_similarity(query_embs, corpus_emb)
 
-            for idx, query_id in enumerate(query_ids):
+            for idx, query_id in enumerate(batch_query_ids):
                 query_similarities = similarities[idx].flatten()
                 top_n_indices = query_similarities.argsort()[-top_n:][::-1]
                 top_n_results = {corpus_ids[j]: float(query_similarities[j]) * 100 for j in top_n_indices}
