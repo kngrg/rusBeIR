@@ -1,4 +1,7 @@
 ## What is it?
+<h1 align="center">
+<img style="vertical-align:middle" width="450" height="200" src="https://github.com/kngrg/rusBeIR/blob/main/images/rusBeIR_logo.png" />
+</h1>
 
 rusBeIR is a [BeIR](https://github.com/beir-cellar/beir)-based Information Retrieval benchmark for Russian language.
 It contains 10 datasets from different domains and more datasets will be added in future. Some of these datasets are parts of multilingual datasets, other are translated from the original ones or were originally in russian. 
