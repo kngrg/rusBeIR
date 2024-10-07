@@ -20,16 +20,15 @@ class DatasetEvaluator:
 
         metrics = ['NDCG', 'MAP', 'Recall', 'P', 'MRR']
 
-        self.datasets = {'rus-mmarco': ('kngrg/rus-mmarco-google', 'kngrg/rus-mmarco-qrels', 'dev'),
-                         'rus-scifact': ('kngrg/rus-scifact', 'kngrg/rus-scifact-qrels', 'test'),
+        self.datasets = {'rus-scifact': ('kngrg/rus-scifact', 'kngrg/rus-scifact-qrels', 'test'),
                          'rus-arguana': ('kngrg/rus-arguana', 'kngrg/rus-arguana-qrels', 'test'),
-                         'rus-nfcorpus': ('kngrg/rus-nfcorpus', 'kngrg/rus-nfcorpus-qrels', 'test'),
-                         'rus-miracl': ('kngrg/rus-miracl', 'kngrg/rus-miracl-qrels', 'dev'),
-                         'rus-xquad': ('kngrg/rus-xquad', 'kngrg/rus-xquad-qrels', 'dev'),
+                         'rus-nfcorpus': ('kngrg/rus-nfcorpus', 'kngrg/rus-nfcorpus-qrels', 'test'),                         'rus-xquad': ('kngrg/rus-xquad', 'kngrg/rus-xquad-qrels', 'dev'),
                          'rus-xquad-sentenes': ('kngrg/rus-xquad-sentences', 'kngrg/rus-xquad-sentences-qrels', 'dev'),
                          'rus-tydiqa': ('kngrg/rus-tydiqa', 'kngrg/rus-tydiqa-qrels', 'dev'),
                          'rubq': ('kngrg/rubq', 'kngrg/rubq-qrels', 'test'),
-                         'ria-news': ('kngrg/ria-news', 'kngrg/ria-news-qrels', 'test')
+                         'ria-news': ('kngrg/ria-news', 'kngrg/ria-news-qrels', 'test'),
+                         'rus-mmarco': ('kngrg/rus-mmarco-google', 'kngrg/rus-mmarco-qrels', 'dev'),
+                         'rus-miracl': ('kngrg/rus-miracl', 'kngrg/rus-miracl-qrels', 'dev')
                          }
 
         self.metrics = metrics
@@ -52,6 +51,11 @@ class DatasetEvaluator:
                                               streaming=False, keep_in_memory=False, text_type=text_type).load(
                 split=args[2])
 
+            out_file = self.results_dir / f"results_{dataset_name}_{args[2]}.json"
+            if out_file.exists():
+                print(f"File with results for {dataset_name} already exists, skipping...")
+                continue
+
             if isinstance(self.model, BM25):
                 index_name = dataset_name
                 self.model = BM25(index_name=index_name, hostname=self.model.config['hostname'], initialize=True)
@@ -61,7 +65,6 @@ class DatasetEvaluator:
                 corpus_emb = self.model.encode_passages([doc['text'] for doc in corpus.values()])
                 results = self.model.retrieve(queries, corpus_emb, list(corpus.keys()))
 
-            out_file = self.results_dir / f"results_{dataset_name}_{args[2]}.json"
             with out_file.open('w', encoding='utf-8') as f:
                 json.dump(results, f, ensure_ascii=False, indent=4)
 
@@ -69,6 +72,12 @@ class DatasetEvaluator:
         self.results_dir = Path(results_path)
         retriever = EvaluateRetrieval(k_values=self.k_values)
         processed_datasets = 0
+
+        self.ndcg_sum = dict.fromkeys([f'NDCG@{k}' for k in self.k_values], 0)
+        self.map_sum = dict.fromkeys([f'MAP@{k}' for k in self.k_values], 0)
+        self.recall_sum = dict.fromkeys([f'Recall@{k}' for k in self.k_values], 0)
+        self.precision_sum = dict.fromkeys([f'P@{k}' for k in self.k_values], 0)
+        self.mrr_sum = dict.fromkeys([f'MRR@{k}' for k in self.k_values], 0)
 
         for dataset_name, args in tqdm(self.datasets.items(), desc="Evaluating results"):
             result_file = self.results_dir / f"results_{dataset_name}_{args[2]}.json"
