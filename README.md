@@ -29,6 +29,15 @@ Baselines could be found [here](https://docs.google.com/spreadsheets/d/19jUZigy-
 
 All datasets are available at [HuggingFace](https://huggingface.co/collections/kngrg/rusbeir-66e28cb06e3e074be55ac0f3).
 
+## Models supported now
+- BM25
+- E5
+- BGE
+- LaBSE
+- [RoSBERTa](https://huggingface.co/ai-forever/ru-en-RoSBERTa)
+- [rus-sci-tiny](https://huggingface.co/mlsa-iai-msu-lab/sci-rus-tiny)
+
+Any Transformers model can be added via describing class derived from HFTransformers
 
 ##  Examples 
 
