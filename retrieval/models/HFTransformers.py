@@ -101,7 +101,7 @@ class HFTransformers:
             with torch.no_grad():
                 outputs = self.model(**batch_dict)
             if pooling_method == 'average':
-                batch_embeddings = self._average_pool(outputs.last_hidden_state, batch_dict['attention_mask'])
+                batch_embeddings = self._average_pool(outputs, batch_dict['attention_mask'])
             elif pooling_method == 'cls':
                 batch_embeddings = self._cls_pool(outputs)
             else:
@@ -112,7 +112,8 @@ class HFTransformers:
 
         return np.vstack(embeddings)
 
-    def _average_pool(self, last_hidden_states: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
+    def _average_pool(self, model_output: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
+        last_hidden_states = model_output.last_hidden_state
         last_hidden = last_hidden_states.masked_fill(~attention_mask[..., None].bool(), 0.0)
         return last_hidden.sum(dim=1) / attention_mask.sum(dim=1)[..., None]
 
