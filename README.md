@@ -24,8 +24,8 @@ Baselines could be found [here](https://docs.google.com/spreadsheets/d/19jUZigy-
 | XQuAD   | [Homepage of original](https://github.com/google-deepmind/xquad) | ``rus-xquad`` | QA | ✅ | Part of multilingual |``dev`` | 1190    |  240    | [rus-xquad](https://huggingface.co/datasets/kngrg/rus-xquad)|
 | XQuAD-sentences   | [Homepage of original](https://github.com/google-deepmind/xquad) | ``rus-xquad-sentences`` | QA | ✅ | Part of multilingual | ``dev`` | 1190   | 1.2K     | [rus-xquad-sentences](https://huggingface.co/datasets/kngrg/rus-xquad-sentences)|
 | TyDi QA   | [Homepage of original](https://github.com/google-research-datasets/tydiqa) | ``rus-tydiqa`` | QA | ✅ | Part of multilingual |``dev``| 1162     |   89K   | [rus-tydiqa](https://huggingface.co/datasets/kngrg/rus-tydiqa)|
-| RuBQ   | [Homepage of original]() | ``rubq`` | QA | ✅ | Russian originally  |``test``| 1692     |   57K   | [rubq](https://huggingface.co/datasets/kngrg/rubq)|
-| Ria-News   | [Homepage of original]() | ``ria-news`` | QA | ✅ | Russian originally | ``test``|  10K    |   704K  | [ria-news](https://huggingface.co/datasets/kngrg/ria-news)|
+| RuBQ   | [Homepage of original](https://github.com/vladislavneon/RuBQ) | ``rubq`` | QA | ✅ | Russian originally  |``test``| 1692     |   57K   | [rubq](https://huggingface.co/datasets/kngrg/rubq)|
+| Ria-News   | [Homepage of original](https://github.com/RossiyaSegodnya/ria_news_dataset) | ``ria-news`` | QA | ✅ | Russian originally | ``test``|  10K    |   704K  | [ria-news](https://huggingface.co/datasets/kngrg/ria-news)|
 
 All datasets are available at [HuggingFace](https://huggingface.co/collections/kngrg/rusbeir-66e28cb06e3e074be55ac0f3).
 
