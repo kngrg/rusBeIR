@@ -66,7 +66,7 @@ class E5Model(HFTransformers):
         with torch.no_grad():
             outputs = self.model(**batch_dict)
 
-        embeddings = super()._average_pool(outputs.last_hidden_state, batch_dict['attention_mask'])
+        embeddings = super()._average_pool(outputs, batch_dict['attention_mask'])
         embeddings = F.normalize(embeddings, p=2, dim=1)
 
         return embeddings
