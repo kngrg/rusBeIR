@@ -8,8 +8,8 @@ from pathlib import Path
 from datasets import load_dataset, Value, Features
 from datasets import load_dataset
 from collections import defaultdict
-from beir.reranking.models import CrossEncoder
-from beir.reranking import Rerank
+from rusBeIR.beir.reranking.models import CrossEncoder
+from rusBeIR.beir.reranking import Rerank
 
 # datasets is a list of datasets which are currently included in this benchmark
 # elements are {'dataset_name' :(hf_corpus&queries_repo, hf_qrels_repo, split)}
@@ -22,16 +22,17 @@ class DatasetEvaluator:
 
         metrics = ['NDCG', 'MAP', 'Recall', 'P', 'MRR']
 
-        self.datasets = {  # 'rus-scifact': ('kngrg/rus-scifact', 'kngrg/rus-scifact-qrels', 'test'),
-            # 'rus-arguana': ('kngrg/rus-arguana', 'kngrg/rus-arguana-qrels', 'test'),
+        self.datasets = {
+            'rus-scifact': ('kngrg/rus-scifact', 'kngrg/rus-scifact-qrels', 'test'),
+            'rus-arguana': ('kngrg/rus-arguana', 'kngrg/rus-arguana-qrels', 'test'),
             'rus-nfcorpus': ('kngrg/rus-nfcorpus', 'kngrg/rus-nfcorpus-qrels', 'test'),
-            # 'rus-xquad': ('kngrg/rus-xquad', 'kngrg/rus-xquad-qrels', 'dev'),
-            # 'rus-xquad-sentenes': ('kngrg/rus-xquad-sentences', 'kngrg/rus-xquad-sentences-qrels', 'dev'),
-            # 'rus-tydiqa': ('kngrg/rus-tydiqa', 'kngrg/rus-tydiqa-qrels', 'dev'),
-            # 'rubq': ('kngrg/rubq', 'kngrg/rubq-qrels', 'test'),
-            # 'ria-news': ('kngrg/ria-news', 'kngrg/ria-news-qrels', 'test'),
-            # 'rus-mmarco': ('kngrg/rus-mmarco-google', 'kngrg/rus-mmarco-qrels', 'dev'),
-            # 'rus-miracl': ('kngrg/rus-miracl', 'kngrg/rus-miracl-qrels', 'dev')
+            'rus-xquad': ('kngrg/rus-xquad', 'kngrg/rus-xquad-qrels', 'dev'),
+            'rus-xquad-sentenes': ('kngrg/rus-xquad-sentences', 'kngrg/rus-xquad-sentences-qrels', 'dev'),
+            'rus-tydiqa': ('kngrg/rus-tydiqa', 'kngrg/rus-tydiqa-qrels', 'dev'),
+            'rubq': ('kngrg/rubq', 'kngrg/rubq-qrels', 'test'),
+            'ria-news': ('kngrg/ria-news', 'kngrg/ria-news-qrels', 'test'),
+            'rus-mmarco': ('kngrg/rus-mmarco-google', 'kngrg/rus-mmarco-qrels', 'dev'),
+            'rus-miracl': ('kngrg/rus-miracl', 'kngrg/rus-miracl-qrels', 'dev')
         }
 
         self.metrics = metrics
@@ -71,17 +72,40 @@ class DatasetEvaluator:
             with out_file.open('w', encoding='utf-8') as f:
                 json.dump(results, f, ensure_ascii=False, indent=4)
 
-    def rerank(self, model_name: str = 'BAAI/bge-reranker-v2-m3', text_type: str = 'processed_text',
-               batch_size: int = 128, results_path=Path('rusBeIR-results')):
+    def rerank(self, model, text_type: str = 'processed_text',
+               batch_size: int = 1, results_path='rusBeIR-results'):
         self.results_dir = Path(results_path)
         self.results_rerank_dir = Path(results_path + '-reranked')
 
         self.results_rerank_dir.mkdir(exist_ok=True)
         self.results_dir.mkdir(exist_ok=True)
 
-        cross_encoder_model = CrossEncoder(model_name)
-        reranker = Rerank(cross_encoder_model, batch_size=batch_size)
+        self.rerank_model = model
+        if isinstance(model, CrossEncoder):
+            print("Beir CrossEncoder")
+            self.rerank_model = Rerank(model, batch_size=batch_size)
 
+        for dataset_name, args in tqdm(self.datasets.items(), desc="Processing datasets"):
+            out_file = self.results_rerank_dir / f"results_{dataset_name}_{args[2]}_reranked.json"
+            if out_file.exists():
+                print(f"File with results for {dataset_name} already exists, skipping...")
+                continue
+
+            corpus, queries, _ = HFDataLoader(hf_repo=args[0], hf_repo_qrels=args[1],
+                                              streaming=False, keep_in_memory=False, text_type=text_type).load(
+                split=args[2])
+
+            result_file = self.results_dir / f'results_{dataset_name}_{args[2]}.json'
+
+            with result_file.open('r', encoding='utf-8') as f:
+                results = json.load(f)
+
+            rerank_results = self.rerank_model.rerank(corpus, queries, results, top_k=20)
+
+            with out_file.open('w', encoding='utf-8') as f:
+                json.dump(rerank_results, f, ensure_ascii=False, indent=4)
+
+        """
         for dataset_name, args in tqdm(self.datasets.items(), desc="Processing datasets"):
             out_file = self.results_rerank_dir / f"results_{dataset_name}_{args[2]}_reranked.json"
             if out_file.exists():
@@ -101,6 +125,7 @@ class DatasetEvaluator:
 
             with out_file.open('w', encoding='utf-8') as f:
                 json.dump(rerank_results, f, ensure_ascii=False, indent=4)
+         """
 
     def evaluate(self, results_path=Path('rusBeIR-results'), results_type: str = "default"):
         self.results_dir = Path(results_path)
