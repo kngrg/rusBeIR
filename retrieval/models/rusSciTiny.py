@@ -20,7 +20,7 @@ class rusSciTinyModel(HFTransformers):
         :param batch_size: Batch size for encoding.
         :return: Query embeddings.
         """
-        return self._get_embeddings(queries, batch_size)
+        return self.get_sentence_embedding(queries, batch_size)
 
     def encode_passages(self, passages: List[str], batch_size: int = 128):
         """
@@ -28,32 +28,19 @@ class rusSciTinyModel(HFTransformers):
         :param batch_size: Batch size for encoding.
         :return: Passage embeddings.
         """
-        return self._get_embeddings(passages, batch_size)
+        return self.get_sentence_embedding(passages, batch_size)
 
-    def _get_embeddings(self, texts: List[str], batch_size: int = 128):
-        """
-        Get embeddings for given texts
-        :param texts: list of texts to encode
-        :param batch_size:
-        :param pooling_method: 'average' or 'cls' are available by default
-        :return: np.ndarray with embeddings
-        """
-
+    def get_sentence_embedding(self, texts, batch_size=128):
         embeddings = []
         for i in tqdm(range(0, len(texts), batch_size), desc="Processing Batches"):
             batch_texts = texts[i:i + batch_size]
-            batch_dict = self.tokenizer(batch_texts, max_length=self.max_len, padding=True, truncation=True,
-                                        return_tensors='pt')
-            batch_dict = {k: v.to(self.device) for k, v in batch_dict.items()}
-
+            encoded_input = self.tokenizer(batch_texts, padding=True, truncation=True, return_tensors='pt',
+                                           max_length=self.max_len).to(self.model.device)
             with torch.no_grad():
-                outputs = self.model(**batch_dict)
-
-            batch_embeddings = self._average_pool(outputs, batch_dict['attention_mask'])
-            batch_embeddings = F.normalize(batch_embeddings, p=2, dim=1)
-            batch_embeddings = batch_embeddings.cpu().detach().numpy()[0]
-            embeddings.append(batch_embeddings)
-
+                model_output = self.model(**encoded_input)
+            sentence_embeddings = self._average_pool(model_output, encoded_input['attention_mask'])
+            sentence_embeddings = F.normalize(sentence_embeddings, p=2, dim=1)
+            embeddings.append(sentence_embeddings.cpu().detach().numpy())
         return np.vstack(embeddings)
 
     def _average_pool(self, model_output, attention_mask):
