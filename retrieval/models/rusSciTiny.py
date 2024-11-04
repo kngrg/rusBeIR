@@ -7,33 +7,34 @@ import numpy as np
 
 
 class rusSciTinyModel(HFTransformers):
-    def __init__(self, model_name: str = 'mlsa-iai-msu-lab/sci-rus-tiny', maxlen: int = None, device: str = 'cuda'):
+    def __init__(self, model_name: str = 'mlsa-iai-msu-lab/sci-rus-tiny', maxlen: int = None, batch_size: int = 128,
+                 device: str = 'cuda'):
         """
         :param model_name: Name of the pre-trained BGE model from HF.
         :param device: Where to run the model ('cuda' or 'cpu').
         """
-        super().__init__(model_name, maxlen=maxlen, device=device)
+        super().__init__(model_name, maxlen=maxlen, batch_size=batch_size, device=device)
 
-    def encode_queries(self, queries: List[str], batch_size: int = 128):
+    def encode_queries(self, queries: List[str]):
         """
         :param queries: List of query strings.
         :param batch_size: Batch size for encoding.
         :return: Query embeddings.
         """
-        return self.get_sentence_embedding(queries, batch_size)
+        return self.get_sentence_embedding(queries)
 
-    def encode_passages(self, passages: List[str], batch_size: int = 128):
+    def encode_passages(self, passages: List[str]):
         """
         :param passages: List of passage strings.
         :param batch_size: Batch size for encoding.
         :return: Passage embeddings.
         """
-        return self.get_sentence_embedding(passages, batch_size)
+        return self.get_sentence_embedding(passages)
 
-    def get_sentence_embedding(self, texts, batch_size=128):
+    def get_sentence_embedding(self, texts):
         embeddings = []
-        for i in tqdm(range(0, len(texts), batch_size), desc="Processing Batches"):
-            batch_texts = texts[i:i + batch_size]
+        for i in tqdm(range(0, len(texts), self.batch_size), desc="Processing Batches"):
+            batch_texts = texts[i:i + self.batch_size]
             encoded_input = self.tokenizer(batch_texts, padding=True, truncation=True, return_tensors='pt',
                                            max_length=self.max_len).to(self.model.device)
             with torch.no_grad():

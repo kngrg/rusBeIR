@@ -24,7 +24,7 @@ class QueryDataset(Dataset):
 
 
 class HFTransformers:
-    def __init__(self, model_name: str, maxlen: int = 512, device: str = 'cuda'):
+    def __init__(self, model_name: str, maxlen: int = 512, batch_size: int = 128, device: str = 'cuda'):
         """
         initialize model and tokenizer from hf-transformers
         :param model_name: hf-model repo
@@ -33,6 +33,7 @@ class HFTransformers:
         self.model, self.tokenizer = self.load_model(model_name, device)
         self.max_len = maxlen
         self.device = device
+        self.batch_size = batch_size
 
     def load_model(self, model_name: str, device: str = 'cuda'):
         model = AutoModel.from_pretrained(model_name).to(device)
@@ -41,33 +42,33 @@ class HFTransformers:
 
         return model, tokenizer
 
-    def encode_queries(self, queries: List[str], batch_size: int = 128):
+    def encode_queries(self, queries: List[str]):
         """
         Encodes queries
         :param queries: list of queries to encode
         :param batch_size: batch_size for encoding
         :return: queries embedding
         """
-        return self._get_embeddings(queries, batch_size, pooling_method='average')
+        return self._get_embeddings(queries, pooling_method='average')
 
-    def encode_passages(self, passages: List[str], batch_size: int = 128):
+    def encode_passages(self, passages: List[str]):
         """
         Encodes passages
         :param passages: list of passages to encode
         :param batch_size: batch_size for encoding
         :return:
         """
-        return self._get_embeddings(passages, batch_size, pooling_method='average')
+        return self._get_embeddings(passages, pooling_method='average')
 
     def retrieve(self, queries: Dict[str, str], corpus_emb: np.ndarray, corpus_ids: List[str],
                  top_n: int = 100) -> Dict[str, Dict[str, float]]:
 
-        batch_size = 16
+        data_batch_size = 16
         num_workers = 4
         top_n = top_n
 
         query_dataset = QueryDataset(list(queries.values()), list(queries.keys()))
-        data_loader = DataLoader(query_dataset, batch_size=batch_size, num_workers=num_workers, pin_memory=True)
+        data_loader = DataLoader(query_dataset, batch_size=data_batch_size, num_workers=num_workers, pin_memory=True)
 
         results = {}
 
@@ -82,7 +83,7 @@ class HFTransformers:
                 results[query_id] = top_n_results
         return results
 
-    def _get_embeddings(self, texts: List[str], batch_size: int = 128, pooling_method: str = 'average'):
+    def _get_embeddings(self, texts: List[str], pooling_method: str = 'average'):
         """
         Get embeddings for given texts
         :param texts: list of texts to encode
@@ -92,8 +93,8 @@ class HFTransformers:
         """
 
         embeddings = []
-        for i in tqdm(range(0, len(texts), batch_size), desc="Processing Batches"):
-            batch_texts = texts[i:i + batch_size]
+        for i in tqdm(range(0, len(texts), self.batch_size), desc="Processing Batches"):
+            batch_texts = texts[i:i + self.batch_size]
             batch_dict = self.tokenizer(batch_texts, max_length=self.max_len, padding=True, truncation=True,
                                         return_tensors='pt')
             batch_dict = {k: v.to(self.device) for k, v in batch_dict.items()}

@@ -25,16 +25,16 @@ class QueryDataset(Dataset):
 
 
 class E5Model(HFTransformers):
-    def __init__(self, model_name: str = 'intfloat/multilingual-e5-large', maxlen: int = 512, device: str = 'cuda'):
-        super().__init__(model_name, maxlen=maxlen, device=device)
+    def __init__(self, model_name: str = 'intfloat/multilingual-e5-large', maxlen: int = 512, batch_size: int = 128, device: str = 'cuda'):
+        super().__init__(model_name, maxlen=maxlen, batch_size=batch_size, device=device)
 
     def encode_queries(self, queries: List[str]):
         queries = [f"query: {query}" for query in queries]
         return self._get_embeddings_full(queries)
 
-    def encode_passages(self, corpus: List[str], batch_size: int = 128):
+    def encode_passages(self, corpus: List[str]):
         passages = [f"passage: {doc}" for doc in corpus]
-        return super().encode_passages(passages, batch_size)
+        return super().encode_passages(passages)
 
     def retrieve(self, queries: Dict[str, str], corpus_emb: np.ndarray, corpus_ids: List[str],
                  top_n: int = 100) -> Dict[str, Dict[str, float]]:
