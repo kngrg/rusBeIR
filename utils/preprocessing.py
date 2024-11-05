@@ -24,8 +24,8 @@ def preprocess_text(text):
 
     return processed_text
 
-input_file = "/Users/kaengreg/Documents/Работа /НИВЦ/datasets/ria-news/corpus_default.jsonl"
-output_file = "/Users/kaengreg/Documents/Работа /НИВЦ/datasets/ria-news/corpus.jsonl"
+input_file = "queries_default.jsonl"
+output_file = "queries.jsonl"
 
 with open(input_file, 'r', encoding='utf-8') as infile:
     total_lines = sum(1 for _ in infile)

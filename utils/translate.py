@@ -48,6 +48,6 @@ def translate_jsonl(input_file, output_file):
                 data['text'] = translate_text(data['text'])
             outfile.write(json.dumps(data, ensure_ascii=False) + '\n')
 
-input_file = '/Users/kaengreg/Documents/Работа /НИВЦ/scifact/queries.jsonl'
+input_file = '/Users/kaengreg/Documents/Работа /НИВЦ/scifact/queries_default.jsonl'
 output_file = '/Users/kaengreg/Documents/Работа /НИВЦ/scifact/ru_queries.jsonl'
 translate_jsonl(input_file, output_file)
