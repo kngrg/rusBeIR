@@ -18,13 +18,13 @@ def load_jsonl(file_path, id_key):
             data[record[id_key]] = record
     return data
 
-queries_file = '/Users/kaengreg/Documents/Работа /НИВЦ/rus-mmarco/queries.jsonl'
+queries_file = '/Users/kaengreg/Documents/Работа /НИВЦ/rus-mmarco/queries_default.jsonl'
 corpus_file = '/Users/kaengreg/Documents/Работа /НИВЦ/rus-mmarco/corpus.jsonl'
 
 queries_data = load_jsonl(queries_file, '_id')
 corpus_data = load_jsonl(corpus_file, '_id')
 
-queries_output_file = '/Users/kaengreg/Documents/Работа /НИВЦ/rus-mmarco-mini/queries.jsonl'
+queries_output_file = '/Users/kaengreg/Documents/Работа /НИВЦ/rus-mmarco-mini/queries_default.jsonl'
 corpus_output_file = '/Users/kaengreg/Documents/Работа /НИВЦ/rus-mmarco-mini/corpus.jsonl'
 
 with open(queries_output_file, 'w', encoding='utf-8') as q_outfile, \

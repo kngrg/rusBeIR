@@ -9,6 +9,6 @@ def process_jsonl(input_file, output_file):
             outfile.write(json.dumps(entry, ensure_ascii=False) + '\n')
 
 input_file = '/Users/kaengreg/Documents/Работа /НИВЦ/storage/rus-mmarco-processed+default/queries.jsonl'
-output_file = '/Users/kaengreg/Documents/Работа /НИВЦ/rus-mmarco-processed/queries.jsonl'
+output_file = '/Users/kaengreg/Documents/Работа /НИВЦ/rus-mmarco-processed/queries_default.jsonl'
 
 process_jsonl(input_file, output_file)
