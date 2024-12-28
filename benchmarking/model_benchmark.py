@@ -23,17 +23,27 @@ class DatasetEvaluator:
         metrics = ['NDCG', 'MAP', 'Recall', 'P', 'MRR']
 
         self.datasets = {
-            'rus-scifact': ('kngrg/rus-scifact', 'kngrg/rus-scifact-qrels', 'test'),
-            'rus-arguana': ('kngrg/rus-arguana', 'kngrg/rus-arguana-qrels', 'test'),
-            'rus-nfcorpus': ('kngrg/rus-nfcorpus', 'kngrg/rus-nfcorpus-qrels', 'test'),
-            'rus-xquad': ('kngrg/rus-xquad', 'kngrg/rus-xquad-qrels', 'dev'),
-            'rus-xquad-sentenes': ('kngrg/rus-xquad-sentences', 'kngrg/rus-xquad-sentences-qrels', 'dev'),
-            'rus-tydiqa': ('kngrg/rus-tydiqa', 'kngrg/rus-tydiqa-qrels', 'dev'),
-            'rubq': ('kngrg/rubq', 'kngrg/rubq-qrels', 'test'),
-            'ria-news': ('kngrg/ria-news', 'kngrg/ria-news-qrels', 'test'),
-            'ru-facts': ('kngrg/ru-facts', 'kngrg/ru-facts-qrels', 'train'),
-            'rus-mmarco': ('kngrg/rus-mmarco-google', 'kngrg/rus-mmarco-qrels', 'dev'),
-            'rus-miracl': ('kngrg/rus-miracl', 'kngrg/rus-miracl-qrels', 'dev')
+            #'rus-scifact': ('kngrg/rus-scifact', 'kngrg/rus-scifact-qrels', 'test'),
+            #'rus-arguana': ('kngrg/rus-arguana', 'kngrg/rus-arguana-qrels', 'test'),
+            #'rus-nfcorpus': ('kngrg/rus-nfcorpus', 'kngrg/rus-nfcorpus-qrels', 'test'),
+            #'rus-xquad': ('kngrg/rus-xquad', 'kngrg/rus-xquad-qrels', 'dev'),
+            #'rus-xquad-sentenes': ('kngrg/rus-xquad-sentences', 'kngrg/rus-xquad-sentences-qrels', 'dev'),
+            #'rus-tydiqa': ('kngrg/rus-tydiqa', 'kngrg/rus-tydiqa-qrels', 'dev'),
+            #'rubq': ('kngrg/rubq', 'kngrg/rubq-qrels', 'test'),
+            #'ria-news': ('kngrg/ria-news', 'kngrg/ria-news-qrels', 'test'),
+            #'ru-facts': ('kngrg/ru-facts', 'kngrg/ru-facts-qrels', 'train'),
+            #'rus-mmarco': ('kngrg/rus-mmarco-google', 'kngrg/rus-mmarco-qrels', 'dev'),
+            #'rus-miracl': ('kngrg/rus-miracl', 'kngrg/rus-miracl-qrels', 'dev'),
+            #'sberquad-retrieval': ('kngrg/sberquad-retrieval', 'kngrg/sberquad-retrieval-qrels', 'test'),
+            #'sberquad-retrieval': ('kngrg/sberquad-retrieval', 'kngrg/sberquad-retrieval-qrels', 'validation'),
+            #'ruscibench-retrieval': ('kngrg/ruSciBench-retrieval', 'kngrg/ruSciBench-retrieval-qrels', 'dev')
+            #'rus-mmarco': ('kngrg/rus-mmarco-google', 'kngrg/rus-mmarco-qrels', 'devpp'),
+            #'rus-mmarco': ('kngrg/rus-mmarco-google', 'kngrg/rus-mmarco-qrels', 'devqp'),
+            #'msmarco': ('BeIR/msmarco', 'BeIR/msmarco-qrels', 'validation'),
+            #'wikiarticles': ('kngrg/wikiarticles', 'kngrg/wikiarticles-qrels', 'dev'), 
+            #'wikiarticles-paragraphs': ('kngrg/wikiarticles-paragraphs', 'kngrg/wikiarticles-paragraphs-qrels', 'dev'),
+            #'wikiarticles-sliding_paragraphs': ('kngrg/wikiarticles-sliding_paragraphs', 'kngrg/wikiarticles-sliding_paragraphs-qrels', 'dev'),
+            'wikifacts': ('kngrg/wikifacts', 'kngrg/wikifacts-qrels', 'dev'),
         }
 
         self.metrics = metrics
