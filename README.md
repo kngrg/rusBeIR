@@ -79,7 +79,7 @@ corpus, queries, qrels = HFDataLoader(hf_repo="kngrg/rus-scifact", hf_repo_qrels
 
 #### Provide parameters for elastic-search
 hostname = "localhost:9200"
-index_name = "mmarco" 
+index_name = "scifact" 
 
 #### Initialize BM25 model and retrieve documents 
 model = BM25(index_name=index_name, hostname=hostname, initialize=True)
