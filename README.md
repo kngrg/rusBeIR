@@ -14,18 +14,30 @@ Baselines could be found [here](https://docs.google.com/spreadsheets/d/19jUZigy-
 
 ##  Available Datasets
 
- Dataset   | Website | rusBEIR-Name | Domain | Public? | Type | Splits | Queries  | Corpus | Download | 
-| -------- | -----| ---------| ------- | --------- |----------- | ----------- | ----------- |----------- | ------------------ |
-| rus-MMARCO <br> (Russian part of mmarco) | [Homepage of original](https://huggingface.co/datasets/unicamp-dl/mmarco)| ``rus-mmmarco`` | Information Retrieval |✅ | Part of multilingual |``dev``<br>``train``|  ``dev:`` 6,980 <br><br> ``train:`` 502,939   |  8.84M     | [rus-mmarco-google](https://huggingface.co/datasets/kngrg/rus-mmarco-google) <br> <br> [rus-mmarco-helsinki](https://huggingface.co/datasets/kngrg/rus-mmarco-helsinki) |
-| SciFact| [Homepage of original](https://github.com/allenai/scifact) | ``rus-scifact``| Fact Checking| ✅ | Translated |``test``<br>``train``|  ``test:`` 300 <br> ``train:`` 800   |  5K    | [rus-scifact](https://huggingface.co/datasets/kngrg/rus-scifact)| 
-| ArguAna    | [Homepage of original](http://argumentation.bplaced.net/arguana/data) | ``rus-arguana``| Argument Retrieval| ✅ | Translated |``test`` | 1,406     |  8.67K    |[rus-arguana](https://huggingface.co/datasets/kngrg/rus-arguana)|
-| NFCorpus   | [Homepage of original](https://www.cl.uni-heidelberg.de/statnlpgroup/nfcorpus/) | ``rus-nfcorpus`` | Bio-Medical IR | ✅ | Translated |``train``<br>``dev``<br>``test``| ``train:`` 2590 <br> ``dev:`` 324 <br> ``test:``  323     |  3.6K     | [rus-nfcorpus](https://huggingface.co/datasets/kngrg/rus-nfcorpus)|
-| MIRACL   | [Homepage of original](https://github.com/project-miracl/miracl) | ``rus-miracl`` | Information Retrieval | ✅ | Part of multilingual |``train``<br>``dev``| ``train:`` 4683 <br>``dev:`` 1252    |   9.54M   | [rus-miracl](https://huggingface.co/datasets/kngrg/rus-miracl)|
-| XQuAD   | [Homepage of original](https://github.com/google-deepmind/xquad) | ``rus-xquad`` | QA | ✅ | Part of multilingual |``dev`` | 1190    |  240    | [rus-xquad](https://huggingface.co/datasets/kngrg/rus-xquad)|
-| XQuAD-sentences   | [Homepage of original](https://github.com/google-deepmind/xquad) | ``rus-xquad-sentences`` | QA | ✅ | Part of multilingual | ``dev`` | 1190   | 1.2K     | [rus-xquad-sentences](https://huggingface.co/datasets/kngrg/rus-xquad-sentences)|
-| TyDi QA   | [Homepage of original](https://github.com/google-research-datasets/tydiqa) | ``rus-tydiqa`` | QA | ✅ | Part of multilingual |``dev``| 1162     |   89K   | [rus-tydiqa](https://huggingface.co/datasets/kngrg/rus-tydiqa)|
-| RuBQ   | [Homepage of original](https://github.com/vladislavneon/RuBQ) | ``rubq`` | QA | ✅ | Russian originally  |``test``| 1692     |   57K   | [rubq](https://huggingface.co/datasets/kngrg/rubq)|
-| Ria-News   | [Homepage of original](https://github.com/RossiyaSegodnya/ria_news_dataset) | ``ria-news`` | QA | ✅ | Russian originally | ``test``|  10K    |   704K  | [ria-news](https://huggingface.co/datasets/kngrg/ria-news)|
+| **Source (↓)**         | **Task (↓)**             | **Dataset (↓)**           | **Origin (↓)**           | **Relevancy** | **Train** | **Dev** | **Test** | **Corpus**  | **Avg. Word Lengths (D/Q)** |
+|-------------------------|--------------------------|---------------------------|--------------------------|---------------|-----------|---------|----------|-------------|-----------------------------|
+| BEIR                   | Information-Retrieval    | rus-MMARCO                | Part of multilingual     | Binary        | 502,939   | 6,980   | ---      | 8,841,823   | 49.6 / 5.95                |
+| BEIR                   | Bio-Medical IR           | rus-NFCorpus              | Translation              | Binary        | 2,590     | 324     | 323      | 3,633       | 216.6 / 3.5                |
+| BEIR                   | Argument Retrieval       | rus-ArguAna               | Translation              | Binary        | ---       | ---     | 1,406    | 8,674       | 147.8 / 173.8              |
+| BEIR                   | Fact Checking            | rus-SciFact               | Translation              | Binary        | 809       | ---     | 300      | 5,183       | 185.8 / 11.2               |
+| BEIR                   | Citation-Prediction      | rus-SCIDOCS               | Translation              | Binary        | ---       | ---     | 1,000    | 25,657      | 153.1 / 9.8                |
+| RU-MTEB                | Information-Retrieval    | RuBQ                      | Originally Russian       | Binary        | ---       | ---     | 1,692    | 56,826      | 62.07 / 6.4                |
+| RU-MTEB                | Information-Retrieval    | Ria-News                  | Originally Russian       | Binary        | ---       | ---     | 10,000   | 704,344     | 155.2 / 8.8                |
+| Open-Source Dataset    | Information-Retrieval    | rus-MIRACL                | Part of multilingual     | Binary        | 4,683     | 1,252   | ---      | 9,543,918   | 43 / 6.2                   |
+| Open-Source Dataset    | Information-Retrieval    | SberQuAD-retrieval        | Originally Russian       | Binary        | 45,328    | 5,036   | 23,936   | 17,474      | 100.4 / 8.7                |
+| Open-Source Dataset    | Information-Retrieval    | ruSciBench-retrieval      | Originally Russian       | Binary        | ---       | 345     | ---      | 200,532     | 89.9 / 9.2                 |
+| Open-Source Dataset    | Question Answering (QA)  | rus-XQuAD                 | Part of multilingual     | Binary        | ---       | 1,190   | ---      | 240         | 112.9 / 8.6                |
+| Open-Source Dataset    | Question Answering (QA)  | rus-XQuAD-sentences       | Part of multilingual     | Binary        | ---       | 1,190   | ---      | 1,212       | 22.4 / 8.6                 |
+| Open-Source Dataset    | Question Answering (QA)  | rus-Tydi QA               | Part of multilingual     | Binary        | ---       | 1,162   | ---      | 89,154      | 69.4 / 6.5                 |
+| Open-Source Dataset    | Question Answering (QA)  | ru-facts                  | Originally Russian       | Binary        | 2,241     | 753     | ---      | 6,236       | 28.1 / 23.9                |
+| rusBEIR                | Information-Retrieval    | wikifacts-articles        | Originally Russian       | 3-level       | ---       | 540     | ---      | 1,324       | 2,535.9 / 11.4             |
+| rusBEIR                | Fact Checking            | wikifacts-para            | Originally Russian       | 3-level       | ---       | 540     | ---      | 15,317      | 219.2 / 11.4               |
+| rusBEIR                | Information-Retrieval    | wikifacts-sents           | Originally Russian       | 3-level       | ---       | 540     | ---      | 188,026     | 17.8 / 11.4                |
+| rusBEIR                | Fact Checking            | wikifacts-sliding_para2   | Originally Russian       | 3-level       | ---       | 540     | ---      | 118,025     | 35.7 / 11.4                |
+| rusBEIR                | Fact Checking            | wikifacts-sliding_para3   | Originally Russian       | 3-level       | ---       | 540     | ---      | 188,024     | 53.6 / 11.4                |
+| rusBEIR                | Fact Checking            | wikifacts-sliding_para4   | Originally Russian       | 3-level       | ---       | 540     | ---      | 188,023     | 71.4 / 11.4                |
+| rusBEIR                | Fact Checking            | wikifacts-sliding_para5   | Originally Russian       | 3-level       | ---       | 540     | ---      | 188,022     | 89.3 / 11.4                |
+| rusBEIR                | Fact Checking            | wikifacts-sliding_para6   | Originally Russian       | 3-level       | ---       | 540     | ---      | 188,021     | 107.1 / 11.4               |
 
 All datasets are available at [HuggingFace](https://huggingface.co/collections/kngrg/rusbeir-66e28cb06e3e074be55ac0f3).
 
