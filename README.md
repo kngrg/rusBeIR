@@ -2,11 +2,12 @@
 <h1 align="center">
 <img style="vertical-align:middle" width="450" height="200" src="https://github.com/kngrg/rusBeIR/blob/main/images/rusBeIR_logo.png" />
 </h1>
+ RusBEIR is a Russian benchmark inspired by [BeIR](https://github.com/beir-cellar/beir), designed for zero-shot evaluation of Information Retrieval (IR) models. Adhering to the principles of BEIR, it offers a robust and diverse evaluation framework, enabling the assessment of IR models across a wide range of tasks and domains in the Russian language.
+The datasets in the RusBEIR benchmark consist of available open-source datasets, datasets that have been translated from English, and newly created datasets.
 
-rusBeIR is a [BeIR](https://github.com/beir-cellar/beir)-based Information Retrieval benchmark for Russian language.
-It contains 10 datasets from different domains and more datasets will be added in future. Some of these datasets are parts of multilingual datasets, other are translated from the original ones or were originally in russian. 
 ## Baselines
-Baselines could be found [here](https://docs.google.com/spreadsheets/d/19jUZigy-AolNOOhT0EzNggiRoEcvfqL7HRpq0bwHqXc/edit?usp=sharing).
+NDCG@10 was choosen as a main metric, results could be found [here](https://docs.google.com/spreadsheets/d/19jUZigy-AolNOOhT0EzNggiRoEcvfqL7HRpq0bwHqXc/edit?usp=sharing).
+
 ## Installation 
 ``` python
 !git clone https://github.com/kngrg/rusBeIR.git
