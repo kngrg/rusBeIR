@@ -74,7 +74,9 @@ class ElasticSearch(object):
             if self.number_of_shards == "default":
                 mapping = {
                     "mappings": {
-                        "properties": {
+                        "properties" : {
+                           #self.title_key: {"type": "text", "analyzer": self.language},
+                           #self.text_key: {"type": "text", "analyzer": self.language}
                             self.title_key: {"type": "text"},
                             self.text_key: {"type": "text"}
                         }}}
@@ -85,6 +87,8 @@ class ElasticSearch(object):
                     },
                     "mappings": {
                         "properties": {
+                            #self.title_key: {"type": "text", "analyzer": self.language},
+                            #self.text_key: {"type": "text", "analyzer": self.language}
                             self.title_key: {"type": "text"},
                             self.text_key: {"type": "text"}
                         }}}
