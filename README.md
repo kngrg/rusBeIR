@@ -48,6 +48,7 @@ NDCG@10 was choosen as a main metric, results could be found [here](https://docs
 All datasets are available at [HuggingFace](https://huggingface.co/collections/kngrg/rusbeir-66e28cb06e3e074be55ac0f3).
 
 ## Models supported now
+Encoders:
 - BM25
 - E5
 - BGE
@@ -55,7 +56,9 @@ All datasets are available at [HuggingFace](https://huggingface.co/collections/k
 - [RoSBERTa](https://huggingface.co/ai-forever/ru-en-RoSBERTa)
 - [rus-sci-tiny](https://huggingface.co/mlsa-iai-msu-lab/sci-rus-tiny)
 - [FRIDA](https://huggingface.co/ai-forever/FRIDA)
-  + [BGE-Reranker-v2-m3](https://huggingface.co/BAAI/bge-reranker-v2-m3)
+
+Rerankers:
+- [BGE-Reranker-v2-m3](https://huggingface.co/BAAI/bge-reranker-v2-m3)
 
 Any Transformers model can be added via describing class derived from HFTransformers
 
