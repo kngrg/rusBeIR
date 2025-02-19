@@ -15,30 +15,35 @@ NDCG@10 was choosen as a main metric, results could be found [here](https://docs
 
 ##  Available Datasets
 
-| **Source (↓)**         | **Task (↓)**             | **Dataset (↓)**           | **Origin (↓)**           | **Relevancy** | **Train** | **Dev** | **Test** | **Corpus**  | **Avg. Word Lengths (D/Q)** |
-|-------------------------|--------------------------|---------------------------|--------------------------|---------------|-----------|---------|----------|-------------|-----------------------------|
-| BEIR                   | Information-Retrieval    | rus-MMARCO                | Part of multilingual     | Binary        | 502,939   | 6,980   | ---      | 8,841,823   | 49.6 / 5.95                |
-| BEIR                   | Bio-Medical IR           | rus-NFCorpus              | Translation              | Binary        | 2,590     | 324     | 323      | 3,633       | 216.6 / 3.5                |
-| BEIR                   | Argument Retrieval       | rus-ArguAna               | Translation              | Binary        | ---       | ---     | 1,406    | 8,674       | 147.8 / 173.8              |
-| BEIR                   | Fact Checking            | rus-SciFact               | Translation              | Binary        | 809       | ---     | 300      | 5,183       | 185.8 / 11.2               |
-| BEIR                   | Citation-Prediction      | rus-SCIDOCS               | Translation              | Binary        | ---       | ---     | 1,000    | 25,657      | 153.1 / 9.8                |
-| RU-MTEB                | Information-Retrieval    | RuBQ                      | Originally Russian       | Binary        | ---       | ---     | 1,692    | 56,826      | 62.07 / 6.4                |
-| RU-MTEB                | Information-Retrieval    | Ria-News                  | Originally Russian       | Binary        | ---       | ---     | 10,000   | 704,344     | 155.2 / 8.8                |
-| Open-Source Dataset    | Information-Retrieval    | rus-MIRACL                | Part of multilingual     | Binary        | 4,683     | 1,252   | ---      | 9,543,918   | 43 / 6.2                   |
-| Open-Source Dataset    | Information-Retrieval    | SberQuAD-retrieval        | Originally Russian       | Binary        | 45,328    | 5,036   | 23,936   | 17,474      | 100.4 / 8.7                |
-| Open-Source Dataset    | Information-Retrieval    | ruSciBench-retrieval      | Originally Russian       | Binary        | ---       | 345     | ---      | 200,532     | 89.9 / 9.2                 |
-| Open-Source Dataset    | Question Answering (QA)  | rus-XQuAD                 | Part of multilingual     | Binary        | ---       | 1,190   | ---      | 240         | 112.9 / 8.6                |
-| Open-Source Dataset    | Question Answering (QA)  | rus-XQuAD-sentences       | Part of multilingual     | Binary        | ---       | 1,190   | ---      | 1,212       | 22.4 / 8.6                 |
-| Open-Source Dataset    | Question Answering (QA)  | rus-Tydi QA               | Part of multilingual     | Binary        | ---       | 1,162   | ---      | 89,154      | 69.4 / 6.5                 |
-| Open-Source Dataset    | Question Answering (QA)  | ru-facts                  | Originally Russian       | Binary        | 2,241     | 753     | ---      | 6,236       | 28.1 / 23.9                |
-| rusBEIR                | Information-Retrieval    | wikifacts-articles        | Originally Russian       | 3-level       | ---       | 540     | ---      | 1,324       | 2,535.9 / 11.4             |
-| rusBEIR                | Fact Checking            | wikifacts-para            | Originally Russian       | 3-level       | ---       | 540     | ---      | 15,317      | 219.2 / 11.4               |
-| rusBEIR                | Information-Retrieval    | wikifacts-sents           | Originally Russian       | 3-level       | ---       | 540     | ---      | 188,026     | 17.8 / 11.4                |
-| rusBEIR                | Fact Checking            | wikifacts-sliding_para2   | Originally Russian       | 3-level       | ---       | 540     | ---      | 118,025     | 35.7 / 11.4                |
-| rusBEIR                | Fact Checking            | wikifacts-sliding_para3   | Originally Russian       | 3-level       | ---       | 540     | ---      | 188,024     | 53.6 / 11.4                |
-| rusBEIR                | Fact Checking            | wikifacts-sliding_para4   | Originally Russian       | 3-level       | ---       | 540     | ---      | 188,023     | 71.4 / 11.4                |
-| rusBEIR                | Fact Checking            | wikifacts-sliding_para5   | Originally Russian       | 3-level       | ---       | 540     | ---      | 188,022     | 89.3 / 11.4                |
-| rusBEIR                | Fact Checking            | wikifacts-sliding_para6   | Originally Russian       | 3-level       | ---       | 540     | ---      | 188,021     | 107.1 / 11.4               |
+| Source               | Task                          | Dataset                  | Origin                 | Relevancy | Train   | Dev   | Test   | Corpus    | Avg. Word Lengths (D/Q) |
+|----------------------|-------------------------------|--------------------------|------------------------|-----------|---------|-------|--------|-----------|--------------------------|
+| BEIR                | Bio-Medical IR                | rus-NFCorpus            | Translation           | Binary    | 2,590   | 324   | 323    | 3,633     | 216.6 / 3.5              |
+| BEIR                | Argument Retrieval            | rus-ArguAna             | Translation           | Binary    | —       | —     | 1,406  | 8,674     | 147.8 / 173.8            |
+| BEIR                | Fact Checking                 | rus-SciFact             | Translation           | Binary    | 809     | -     | 300    | 5,183     | 185.1 / 11.2             |
+| BEIR                | Citation-Prediction           | rus-SCiDOCS             | Translation           | Binary    | —       | —     | 1000   | 25,657    | 153.1 / 9.8              |
+| BEIR                | Bio-Medical IR                | rus-TREC-COVID          | Translation           | 3-level   | —       | -     | 50     | 171,332   | 138.9 / 8.5              |
+| BEIR                | Question Answering (QA)       | rus-FiQA                | Translation           | Binary    | 5,500   | 500   | 648    | 57,638    | 122.1 / 9.9              |
+| BEIR                | Duplicate Question Retrieval  | rus-Quora               | Translation           | Binary    | —       | 5,000 | 10,000 | 522,931   | 9.8 / 7.9                |
+| BEIR                | Duplicate Question Retrieval  | rus-CQADupstack         | Translation           | Binary    | —       | —     | 13,145 | 457,199   | 117.6 / 7.6              |
+| BEIR                | Argument Retrieval            | rus-Touche              | Translation           | Binary    | —       | —     | 49     | 382,545   | 252.5 / 6.8              |
+| BEIR                | Information-Retrieval         | rus-MMARCO             | Part of multilingual  | Binary    | 502,939 | 6,980  | —      | 8,841,823 | 49.6 / 5.95              |
+| Open-Source Dataset | Information-Retrieval         | rus-MIRACL             | Part of multilingual  | Binary    | 4,683   | 1,252 | —      | 9,543,918 | 43 / 6.2                 |
+| Open-Source Dataset | Question Answering (QA)       | rus-XQuAD              | Part of multilingual  | Binary    | —       | 1,190 | —      | 240       | 112.9 / 8.6              |
+| Open-Source Dataset | Question Answering (QA)       | rus-XQuAD-sentences    | Part of multilingual  | Binary    | —       | 1,190 | —      | 1,212     | 22.4 / 8.6               |
+| Open-Source Dataset | Question Answering (QA)       | rus-TyDi QA            | Part of multilingual  | Binary    | —       | 1,162 | —      | 89,154    | 69.4 / 6.5               |
+| Open-Source Dataset | Information-Retrieval         | SberQUAD-retrieval     | Originally Russian    | Binary    | 45,328  | 5,036 | 23,936 | 17,474    | 100.4 / 8.7              |
+| Open-Source Dataset | Information-Retrieval         | rusSciBench-retrieval  | Originally Russian    | Binary    | -       | 345   | -      | 200,532   | 89.9 / 9.2               |
+| Open-Source Dataset | Question Answering (QA)       | ru-facts              | Originally Russian    | Binary    | 2,241   | 753   | —      | 6,236     | 28.1 / 23.9              |
+| RU-MTEB             | Information-Retrieval         | RuBQ                   | Originally Russian    | Binary    | —       | —     | 1,692  | 56,826    | 62.07 / 6.4              |
+| RU-MTEB             | Information-Retrieval         | Ria-News               | Originally Russian    | Binary    | —       | —     | 10,000 | 704,344   | 155.2 / 8.8              |
+| rusBEIR             | Information-Retrieval | wikifacts-articles       | Originally Russian  | 3-level   | —     | 540  | —    | 1,324    | 2,535.9 / 11.4          |
+| rusBEIR             | Fact Checking         | wikifacts-para           | Originally Russian  | 3-level   | —     | 540  | —    | 15,317   | 219.2 / 11.4            |
+| rusBEIR             | Information-Retrieval | wikifacts-sents          | Originally Russian  | 3-level   | —     | 540  | —    | 188,026  | 17.8 / 11.4             |
+| rusBEIR             | Fact Checking         | wikifacts-sliding_para2  | Originally Russian  | 3-level   | —     | 540  | —    | 118,025  | 35.7 / 11.4             |
+| rusBEIR             | Fact Checking         | wikifacts-sliding_para3  | Originally Russian  | 3-level   | —     | 540  | —    | 188,024  | 53.6 / 11.4             |
+| rusBEIR             | Fact Checking         | wikifacts-sliding_para4  | Originally Russian  | 3-level   | —     | 540  | —    | 188,023  | 71.4 / 11.4             |
+| rusBEIR             | Fact Checking         | wikifacts-sliding_para5  | Originally Russian  | 3-level   | —     | 540  | —    | 188,022  | 89.3 / 11.4             |
+| rusBEIR             | Fact Checking         | wikifacts-sliding_para6  | Originally Russian  | 3-level   | —     | 540  | —    | 188,021  | 107.1 / 11.4            |      
 
 All datasets are available at [HuggingFace](https://huggingface.co/collections/kngrg/rusbeir-66e28cb06e3e074be55ac0f3).
 
@@ -49,6 +54,8 @@ All datasets are available at [HuggingFace](https://huggingface.co/collections/k
 - LaBSE
 - [RoSBERTa](https://huggingface.co/ai-forever/ru-en-RoSBERTa)
 - [rus-sci-tiny](https://huggingface.co/mlsa-iai-msu-lab/sci-rus-tiny)
+- [FRIDA](https://huggingface.co/ai-forever/FRIDA)
+  + [BGE-Reranker-v2-m3](https://huggingface.co/BAAI/bge-reranker-v2-m3)
 
 Any Transformers model can be added via describing class derived from HFTransformers
 
