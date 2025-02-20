@@ -23,35 +23,40 @@ class DatasetEvaluator:
         metrics = ['NDCG', 'MAP', 'Recall', 'P', 'MRR']
 
         self.datasets = {
-            'rus-scifact': ('kngrg/rus-scifact', 'kngrg/rus-scifact-qrels', 'test'),
-            'rus-arguana': ('kngrg/rus-arguana', 'kngrg/rus-arguana-qrels', 'test'),
             'rus-nfcorpus': ('kngrg/rus-nfcorpus', 'kngrg/rus-nfcorpus-qrels', 'test'),
+            'rus-arguana': ('kngrg/rus-arguana', 'kngrg/rus-arguana-qrels', 'test'),
+            'rus-scifact': ('kngrg/rus-scifact', 'kngrg/rus-scifact-qrels', 'test'),
+            'rus-scidocs': ('kngrg/rus-scidocs', 'kngrg/rus-scidocs-qrels', 'test'),
+            'rus-trec-covid': ('kngrg/rus-trec-covid', 'kngrg/rus-trec-covid-qrels', 'test'),
+            'rus-fiqa': ('kngrg/rus-fiqa', 'kngrg/rus-fiqa-qrels', 'dev'),
+            'rus-quora': ('kngrg/rus-quora', 'kngrg/rus-quora-qrels', 'dev'),
+            "rus-cqadupstack": ('kngrg/rus-cqadupstack', 'kngrg/rus-cqadupstack-qrels', 'test'),
+            'rus-touche': ('kngrg/rus-touche', 'kngrg/rus-touche-qrels', 'test'),
+            
+            'rus-mmarco': ('kngrg/rus-mmarco-google', 'kngrg/rus-mmarco-qrels', 'dev'),
+            'rus-miracl': ('kngrg/rus-miracl', 'kngrg/rus-miracl-qrels', 'dev'),
             'rus-xquad': ('kngrg/rus-xquad', 'kngrg/rus-xquad-qrels', 'dev'),
             'rus-xquad-sentenes': ('kngrg/rus-xquad-sentences', 'kngrg/rus-xquad-sentences-qrels', 'dev'),
             'rus-tydiqa': ('kngrg/rus-tydiqa', 'kngrg/rus-tydiqa-qrels', 'dev'),
-            'rubq': ('kngrg/rubq', 'kngrg/rubq-qrels', 'test'),
-            'ria-news': ('kngrg/ria-news', 'kngrg/ria-news-qrels', 'test'),
-            'ru-facts': ('kngrg/ru-facts', 'kngrg/ru-facts-qrels', 'train'),
-            'rus-mmarco': ('kngrg/rus-mmarco-google', 'kngrg/rus-mmarco-qrels', 'dev'),
-            'rus-miracl': ('kngrg/rus-miracl', 'kngrg/rus-miracl-qrels', 'dev'),
             'sberquad-retrieval': ('kngrg/sberquad-retrieval', 'kngrg/sberquad-retrieval-qrels', 'test'),
             'sberquad-retrieval': ('kngrg/sberquad-retrieval', 'kngrg/sberquad-retrieval-qrels', 'validation'),
             'ruscibench-retrieval': ('kngrg/ruSciBench-retrieval', 'kngrg/ruSciBench-retrieval-qrels', 'dev'),
-            'rus-mmarco': ('kngrg/rus-mmarco-google', 'kngrg/rus-mmarco-qrels', 'devpp'),
-            'rus-mmarco': ('kngrg/rus-mmarco-google', 'kngrg/rus-mmarco-qrels', 'devqp'),
+            'ru-facts': ('kngrg/ru-facts', 'kngrg/ru-facts-qrels', 'train'),
+            'rubq': ('kngrg/rubq', 'kngrg/rubq-qrels', 'test'),
+            'ria-news': ('kngrg/ria-news', 'kngrg/ria-news-qrels', 'test'),
+            
+            #'rus-mmarco': ('kngrg/rus-mmarco-google', 'kngrg/rus-mmarco-qrels', 'devpp'),
+            #'rus-mmarco': ('kngrg/rus-mmarco-google', 'kngrg/rus-mmarco-qrels', 'devqp'),
             'msmarco': ('BeIR/msmarco', 'BeIR/msmarco-qrels', 'validation'),
-            'wikifacts-sents': ('kngrg/wikifacts-sents', 'kngrg/wikifacts-sents-qrels', 'dev'),
-            'wikifacts-para': ('kngrg/wikifacts-para', 'kngrg/wikifacts-para-qrels', 'dev'),
             'wikifacts-articles': ('kngrg/wikifacts-articles', 'kngrg/wikifacts-articles-qrels', 'dev'),
-            'wikifacts-sliding_para6': ('kngrg/wikifacts-sliding_para6', 'kngrg/wikifacts-sliding_para6-qrels', 'dev'),
-            'wikifacts-sliding_para5': ('kngrg/wikifacts-sliding_para5', 'kngrg/wikifacts-sliding_para5-qrels', 'dev'),
-            'wikifacts-sliding_para4': ('kngrg/wikifacts-sliding_para4', 'kngrg/wikifacts-sliding_para4-qrels', 'dev'),
-            'wikifacts-sliding_para3': ('kngrg/wikifacts-sliding_para3', 'kngrg/wikifacts-sliding_para3-qrels', 'dev'),
+            'wikifacts-para': ('kngrg/wikifacts-para', 'kngrg/wikifacts-para-qrels', 'dev'),
+            'wikifacts-sents': ('kngrg/wikifacts-sents', 'kngrg/wikifacts-sents-qrels', 'dev'), 
             'wikifacts-sliding_para2': ('kngrg/wikifacts-sliding_para2', 'kngrg/wikifacts-sliding_para2-qrels', 'dev'),
-            'rus-scidocs': ('kngrg/rus-scidocs', 'kngrg/rus-scidocs-qrels', 'test'),
-            'rus-trec-covid': ('kngrg/rus-trec-covid', 'kngrg/rus-trec-covid-qrels', 'test')
-
-
+            'wikifacts-sliding_para3': ('kngrg/wikifacts-sliding_para3', 'kngrg/wikifacts-sliding_para3-qrels', 'dev'),
+            'wikifacts-sliding_para4': ('kngrg/wikifacts-sliding_para4', 'kngrg/wikifacts-sliding_para4-qrels', 'dev'),
+            'wikifacts-sliding_para5': ('kngrg/wikifacts-sliding_para5', 'kngrg/wikifacts-sliding_para5-qrels', 'dev'),
+            'wikifacts-sliding_para6': ('kngrg/wikifacts-sliding_para6', 'kngrg/wikifacts-sliding_para6-qrels', 'dev'),
+           
         }
 
         self.metrics = metrics
