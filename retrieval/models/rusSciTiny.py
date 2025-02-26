@@ -12,23 +12,25 @@ class rusSciTinyModel(HFTransformers):
         """
         :param model_name: Name of the pre-trained BGE model from HF.
         :param device: Where to run the model ('cuda' or 'cpu').
+        :param maxlen: Models max_length
+        :param batch_size: Size of batch that process 
         """
         super().__init__(model_name, maxlen=maxlen, batch_size=batch_size, device=device)
 
-    def encode_queries(self, queries: List[str]):
+    def encode_queries(self, queries: Dict[str]):
         """
-        :param queries: List of query strings.
-        :param batch_size: Batch size for encoding.
+        :param queries: Dict of query strings.
         :return: Query embeddings.
         """
+        queries = list(queries.values())
         return self.get_sentence_embedding(queries)
 
-    def encode_passages(self, passages: List[str]):
+    def encode_corpus(self, corpus: Dict[str, Dict[str, str]]):
         """
-        :param passages: List of passage strings.
-        :param batch_size: Batch size for encoding.
+        :param passages: Dict of passage strings.
         :return: Passage embeddings.
         """
+        passages = [doc['tilte'] + doc['text'] for doc in corpus.values()]
         return self.get_sentence_embedding(passages)
 
     def get_sentence_embedding(self, texts):

@@ -1,72 +1,34 @@
-import torch
-from transformers import AutoTokenizer, AutoModel
-import torch.nn.functional as F
-from torch.utils.data import Dataset, DataLoader
-from sklearn.metrics.pairwise import cosine_similarity
-import numpy as np
-from tqdm import tqdm
-from typing import List, Dict
-import os
+from typing import Dict
 from rusBeIR.retrieval.models.HFTransformers import HFTransformers
-
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
-
-class QueryDataset(Dataset):
-    def __init__(self, queries, queries_ids):
-        self.queries = queries
-        self.query_ids = queries_ids
-
-    def __len__(self):
-        return len(self.queries)
-
-    def __getitem__(self, idx):
-        return self.queries[idx], self.query_ids[idx]
-
 
 class E5Model(HFTransformers):
     def __init__(self, model_name: str = 'intfloat/multilingual-e5-large', maxlen: int = 512, batch_size: int = 128, device: str = 'cuda'):
+        """
+        :param model_name: Name of the pre-trained BGE model from HF.
+        :param device: Where to run the model ('cuda' or 'cpu').
+        :param maxlen: Models max_length
+        :param batch_size: Size of batch that process 
+        """
         super().__init__(model_name, maxlen=maxlen, batch_size=batch_size, device=device)
 
-    def encode_queries(self, queries: List[str]):
-        queries = [f"query: {query}" for query in queries]
-        return self._get_embeddings_full(queries)
+    def encode_queries(self, queries: Dict[str, str], pooling_method: str = 'average', prefix: str = 'query: '):
+        """
+        :param queries: Dict of query ids and corresponding queries.
+        :param batch_size: Batch size for encoding.
+        :param pooling_method: Method for pooling.
+        :param prefix: Search prefix if needed
+        :return: Query embeddings.
+        """
+        return super().encode_queries(queries, pooling_method=pooling_method, prefix=prefix)
 
-    def encode_passages(self, corpus: List[str]):
-        passages = [f"passage: {doc}" for doc in corpus]
-        return super().encode_passages(passages)
+    def encode_corpus(self, corpus: Dict[str, Dict[str, str]], pooling_method: str = 'average', prefix: str = 'passage: '):
+        """
+        :param passages: Dict of passages ids and corresponding passages.
+        :param batch_size: Batch size for encoding.
+        :param pooling_method: Method for pooling.
+        :param prefix: Search prefix if needed
+        :return: Passage embeddings.
+        """
+        return super().encode_corpus(corpus, pooling_method=pooling_method, prefix=prefix)
 
-    def retrieve(self, queries: Dict[str, str], corpus_emb: np.ndarray, corpus_ids: List[str],
-                 top_n: int = 100) -> Dict[str, Dict[str, float]]:
-
-        batch_size = 16
-        num_workers = 4
-        top_n = top_n
-
-        query_dataset = QueryDataset(list(queries.values()), list(queries.keys()))
-        data_loader = DataLoader(query_dataset, batch_size=batch_size, num_workers=num_workers, pin_memory=True)
-
-        results = {}
-
-        for batch_queries, batch_query_ids in tqdm(data_loader, desc="Processing Queries"):
-            query_embs = self.encode_queries(batch_queries)
-            query_embs = query_embs.cpu().numpy()
-            similarities = cosine_similarity(query_embs, corpus_emb)
-
-            for idx, query_id in enumerate(batch_query_ids):
-                query_similarities = similarities[idx].flatten()
-                top_n_indices = query_similarities.argsort()[-top_n:][::-1]
-                top_n_results = {corpus_ids[j]: float(query_similarities[j]) * 100 for j in top_n_indices}
-                results[query_id] = top_n_results
-        return results
-
-    def _get_embeddings_full(self, texts: List[str]):
-        batch_dict = self.tokenizer(texts, max_length=self.max_len, padding=True, truncation=True, return_tensors='pt')
-        batch_dict = {k: v.to(self.device) for k, v in batch_dict.items()}
-        with torch.no_grad():
-            outputs = self.model(**batch_dict)
-
-        embeddings = super()._average_pool(outputs, batch_dict['attention_mask'])
-        embeddings = F.normalize(embeddings, p=2, dim=1)
-
-        return embeddings
+    

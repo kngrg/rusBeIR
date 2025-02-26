@@ -12,19 +12,20 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 class QueryDataset(Dataset):
-    def __init__(self, queries, queries_ids):
+    def __init__(self, queries: Dict[str, Dict[str, str]]):
         self.queries = queries
-        self.query_ids = queries_ids
 
     def __len__(self):
         return len(self.queries)
 
     def __getitem__(self, idx):
-        return self.queries[idx], self.query_ids[idx]
+        query_id = list(self.queries.keys())[idx]
+        query_text = self.queries[query_id]
+        return query_text, query_id
 
 
 class HFTransformers:
-    def __init__(self, model_name: str, maxlen: int = 512, batch_size: int = 128, device: str = 'cuda'):
+    def __init__(self, model_name: str, maxlen: int = 512, batch_size: int = 128, device: str = 'cuda', model_sep: str = "[SEP]"):
         """
         initialize model and tokenizer from hf-transformers
         :param model_name: hf-model repo
@@ -34,6 +35,7 @@ class HFTransformers:
         self.max_len = maxlen
         self.device = device
         self.batch_size = batch_size
+        self.model_sep = model_sep
 
     def load_model(self, model_name: str, device: str = 'cuda'):
         model = AutoModel.from_pretrained(model_name).to(device)
@@ -42,38 +44,50 @@ class HFTransformers:
 
         return model, tokenizer
 
-    def encode_queries(self, queries: List[str]):
+    def encode_queries(self, queries: Dict[str, str], pooling_method: str = "average", prefix: str = ''):
         """
         Encodes queries
         :param queries: list of queries to encode
         :param batch_size: batch_size for encoding
         :return: queries embedding
         """
-        return self._get_embeddings(queries, pooling_method='average')
+        queries = [prefix + query for query in queries.values()]
+        return self._get_embeddings(queries, pooling_method=pooling_method)
 
-    def encode_passages(self, passages: List[str]):
+    def encode_corpus(self, corpus: Dict[str, Dict[str, str]], pooling_method: str = "average", prefix: str = ''):
         """
         Encodes passages
         :param passages: list of passages to encode
         :param batch_size: batch_size for encoding
         :return:
         """
-        return self._get_embeddings(passages, pooling_method='average')
+        corpus = [prefix + doc['title'] + self.model_sep + doc['text'] for doc in corpus.values()]
+        return self._get_embeddings(corpus, pooling_method=pooling_method)
 
-    def retrieve(self, queries: Dict[str, str], corpus_emb: np.ndarray, corpus_ids: List[str],
-                 top_n: int = 100) -> Dict[str, Dict[str, float]]:
+    def retrieve(self, queries: Dict[str, str], 
+               corpus: Dict[str, Dict[str, str]],
+               top_n: int = 100, 
+               data_batch_size: int = 16, 
+               num_workers = 4
+               ) -> Dict[str, Dict[str, float]]:
 
-        data_batch_size = 16
-        num_workers = 4
+        corpus_emb = self.encode_corpus(corpus)
+        corpus_ids = list(corpus.keys())
+
+        data_batch_size = data_batch_size
+        num_workers = num_workers
         top_n = top_n
 
-        query_dataset = QueryDataset(list(queries.values()), list(queries.keys()))
+        query_dataset = QueryDataset(queries)
         data_loader = DataLoader(query_dataset, batch_size=data_batch_size, num_workers=num_workers, pin_memory=True)
 
         results = {}
 
         for batch_queries, batch_query_ids in tqdm(data_loader, desc="Processing Queries"):
-            query_embs = self.encode_queries(batch_queries)
+            query_dict = {query_id: query for query_id, query in zip(batch_query_ids, batch_queries)}
+
+            query_embs = self.encode_queries(query_dict)
+
             similarities = cosine_similarity(query_embs, corpus_emb)
 
             for idx, query_id in enumerate(batch_query_ids):
